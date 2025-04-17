@@ -10,8 +10,7 @@ export default tseslint.config(
   { ignores: ['dist'] },
   {
     extends: [
-      js.configs.recommended,
-      ...tseslint.configs.recommended,
+      js.configs.all,
       jsStylistic.configs.all,
       tsStylistic.configs.all,
     ],
