@@ -3,6 +3,8 @@ import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
+import tsStylistic from '@stylistic/eslint-plugin-ts'
+import jsStylistic from '@stylistic/eslint-plugin-js'
 
 export default tseslint.config(
   { ignores: ['dist'] },
@@ -10,6 +12,8 @@ export default tseslint.config(
     extends: [
       js.configs.recommended,
       ...tseslint.configs.recommended,
+      jsStylistic.configs.all,
+      tsStylistic.configs.all,
     ],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
