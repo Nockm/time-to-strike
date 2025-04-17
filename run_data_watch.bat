@@ -1,0 +1,1 @@
+chokidar "**/*.tsx" "**/*.ts" -c "run_data.bat"
