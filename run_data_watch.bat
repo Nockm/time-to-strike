@@ -1,0 +1,1 @@
+chokidar **/*.ts -c "run_data.bat"
