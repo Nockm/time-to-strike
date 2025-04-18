@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "npm run lint:js & npm run lint:ts",
+    "lint:js": "eslint .",
+    "lint:ts": "tsc --project tsconfig.node.json --noEmit",
+    "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest"
