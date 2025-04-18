@@ -11,6 +11,7 @@ export default tseslint.config(
   {
     extends: [
       js.configs.all,
+      ...tseslint.configs.all,
       jsStylistic.configs.all,
       tsStylistic.configs.all,
     ],
@@ -18,6 +19,9 @@ export default tseslint.config(
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+      parserOptions: {
+        project: './tsconfig.json',
+      },
     },
     plugins: {
       'react-hooks': reactHooks,
