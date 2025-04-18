@@ -34,6 +34,50 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+
+      // Personal preferences. (Unlikely to change these.)
+      "@stylistic/js/comma-dangle": ["warn", "always-multiline"],
+      "@stylistic/js/function-call-argument-newline": "off",
+      "@stylistic/js/linebreak-style": ["warn", "windows"],
+      "@stylistic/js/multiline-comment-style": "off",
+      "@stylistic/js/object-curly-spacing": ["warn", "always"],
+      "@stylistic/js/object-property-newline": "off",
+      "@stylistic/js/padded-blocks": ["warn", "never"],
+      "@stylistic/js/quotes": ["warn", "single"],
+      "@stylistic/ts/comma-dangle": ["warn", "always-multiline"],
+      "@stylistic/ts/object-curly-spacing": ["warn", "always"],
+      "@stylistic/ts/object-property-newline": "off",
+      "@stylistic/ts/quotes": ["warn", "single"],
+      "@typescript-eslint/max-params": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-magic-numbers": "off",
+      "capitalized-comments": "off",
+      "func-style": "off",
+      "max-lines-per-function": "off",
+      "max-params": "off",
+      "max-statements": "off",
+      "no-console": "off",
+      "no-inline-comments": "off",
+      "no-ternary": "off",
+      "one-var": "off",
+      "sort-imports": "off",
+
+      // Not sure. (Need to try `strictNullChecks` compiler option first.)
+      "@typescript-eslint/prefer-nullish-coalescing": "off", // This rule requires the `strictNullChecks` compiler option to be turned on to function correctly
+      "@typescript-eslint/no-unnecessary-boolean-literal-compare": "off", // This rule requires the `strictNullChecks` compiler option to be turned on to function correctly
+      "@typescript-eslint/no-unnecessary-condition": "off", // This rule requires the `strictNullChecks` compiler option to be turned on to function correctly
+      "@typescript-eslint/strict-boolean-expressions": "off", // This rule requires the `strictNullChecks` compiler option to be turned on to function correctly
+
+      // Need a lot of time to fix these.
+      "@typescript-eslint/prefer-readonly-parameter-types": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+
+      // Should fix these soon.
+      "no-await-in-loop": "off",
     },
   },
 )
