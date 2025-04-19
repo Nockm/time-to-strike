@@ -1,0 +1,26 @@
+{
+	"get": "status",
+	"parameters": [],
+	"errors": [],
+	"results": 0,
+	"paging": {
+		"current": 1,
+		"total": 1
+	},
+	"response": {
+		"account": {
+			"firstname": "Lu",
+			"lastname": "Nocky",
+			"email": "lunocky@gmail.com"
+		},
+		"subscription": {
+			"plan": "Free",
+			"end": "2026-04-09T00:00:00+00:00",
+			"active": true
+		},
+		"requests": {
+			"current": 93,
+			"limit_day": 100
+		}
+	}
+}
