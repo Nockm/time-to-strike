@@ -80,4 +80,22 @@ export default tseslint.config(
       "no-await-in-loop": "off",
     },
   },
+  {
+    // App-specific
+    files: [
+      'src/**/*.{ts,tsx}',
+    ],
+    rules: {
+      "@typescript-eslint/naming-convention": ["off"],
+    },
+  },
+  {
+    // Script-specific
+    files: [
+      'data/**/*.{ts,tsx}',
+      'test/**/*.{ts,tsx}',
+    ],
+    rules: {
+    },
+  },
 )
