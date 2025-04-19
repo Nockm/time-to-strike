@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 const data = [
@@ -6,7 +7,7 @@ const data = [
     { 'name': 'Mar', 'value': 60 },
 ];
 
-export default function MyChart () {
+export default function MyChart (): JSX.Element {
     return (
         <BarChart width={400} height={300} data={data}>
             <CartesianGrid strokeDasharray="3 3" />

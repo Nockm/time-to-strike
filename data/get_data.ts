@@ -73,7 +73,7 @@ interface ReportEvent {
     'player.id': number;
     'player.name': string;
     'team.id': number;
-    'team.logo': string;
+    // 'team.logo': string;
     'team.name': string;
     'time.elapsed': number;
     'time.extra': null | number;
@@ -91,7 +91,7 @@ function eventToReportEvent (gameEvent: GameEvent): ReportEvent {
         'player.id': gameEvent.player.id,
         'player.name': gameEvent.player.name,
         'team.id': gameEvent.team.id,
-        'team.logo': gameEvent.team.logo,
+        // 'team.logo': gameEvent.team.logo,
         'team.name': gameEvent.team.name,
         'time.elapsed': gameEvent.time.elapsed,
         'time.extra': gameEvent.time.extra,
