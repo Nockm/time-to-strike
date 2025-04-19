@@ -14,3 +14,13 @@
 | `docs`     | Change to **documentation**.                                             | ☑️                                 |
 | `revert`   | A commit that undoes a previous commit.                                  | ☑️                                 |
 | `wip`      | Work in progress (usually avoided on main, used on dev branches).        | ☑️                                 |
+
+
+| Area |
+| -- |
+| data |
+| data.cache |
+| site |
+| site.docs |
+| lint |
+| test |
