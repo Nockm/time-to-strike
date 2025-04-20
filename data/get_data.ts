@@ -5,7 +5,7 @@ import { getFixture } from './api/getFixture.ts';
 import { getFixtures as getSeasonFixtures } from './api/getFixtures.ts';
 import { getStatus } from './api/getStatus.ts';
 import { writeFileSync } from 'fs';
-import { getDirname } from './util/pathUtil.ts';
+import { ensureEmptyDir, getDirname } from './util/pathUtil.ts';
 import path from 'path';
 
 const delay = (ms: number): unknown => new Promise((res) => setTimeout(res, ms)); // eslint-disable-line no-promise-executor-return
@@ -51,10 +51,9 @@ function apiEventToDbEvent (apiFixtureInfo: Api.FixtureInfo, apiEvent: Api.Event
     let timecode = 0;
 
     timecode += apiEvent.time.elapsed <= 45
-        ? 100
-        : 200;
+        ? 100 + apiEvent.time.elapsed
+        : 200 + apiEvent.time.elapsed - 45;
 
-    timecode += apiEvent.time.elapsed % 45;
     timecode += apiEvent.time.extra || 0;
 
     const dbEvent: Db.Event = {
@@ -91,20 +90,19 @@ function apiFixtureInfoToDbEvents (apiFixtureInfo: Api.FixtureInfo): Db.Event[] 
 async function processSeason ({
     dbRoot,
     league = 39,
-    requestedCredits = 1,
+    creditsAvailable,
     season = 2023,
 }: {
     'dbRoot': Db.Root;
     'league'?: number;
-    'requestedCredits'?: number;
+    'creditsAvailable': number;
     'season'?: number;
-}): Promise<void> {
-    let credits = await getCredits(requestedCredits);
-
+}): Promise<number> {
     const getSeasonFixturesResponse = await getSeasonFixtures({ league, season }, { 'useLocal': true, 'useRemote': true });
     if (!getSeasonFixturesResponse) {
-        return;
+        return 0;
     }
+    let credits = creditsAvailable;
 
     const baseFixtureInfos: Api.BaseFixtureInfo[] = getSeasonFixturesResponse.response;
     const fixtureIds = baseFixtureInfos.map((fixture) => fixture.fixture.id);
@@ -154,23 +152,59 @@ async function processSeason ({
         }
     }
     console.log(`${logPrefix} Finished: Obtained ${numFixturesProcessed}/${fixtureIds.length} fixtures.`);
+
+    return credits;
 }
 
 /*
  * Reporting.
  */
 
-async function doIt (): Promise<void> {
+export function count<T> (
+    sortKeys: boolean,
+    sortVals: boolean,
+    log: boolean,
+    items: T[],
+    getKeyValPairFunc: (item: T) => string,
+    savePath?: string,
+): Record<string, number> {
+    let counter = counters.getCounter(items, getKeyValPairFunc);
+
+    if (sortKeys) {
+        counter = counters.sortRecordByKey(counter);
+    }
+    if (sortVals) {
+        counter = counters.sortRecordByValue(counter);
+    }
+
+    if (log) {
+        console.log(JSON.stringify(counter, null, 2));
+    }
+
+    if (savePath) {
+        writeFileSync(savePath, JSON.stringify(counter, null, 2), { 'encoding': 'utf-8' });
+    }
+
+    return counter;
+}
+
+async function doIt (requestedCredits = -1): Promise<void> {
     const dbRoot: Db.Root = {
         'events': [],
     };
 
-    await processSeason({ dbRoot, 'league': 39, 'season': 2023 });
+    let credits = await getCredits(requestedCredits);
+
+    credits = await processSeason({ 'creditsAvailable': credits, dbRoot, 'league': 39, 'season': 2023 });
+    credits = await processSeason({ 'creditsAvailable': credits, dbRoot, 'league': 39, 'season': 2022 });
+
+    const outputDir = path.join(getDirname(import.meta.url), 'output');
+    ensureEmptyDir(outputDir);
 
     /* eslint-disable @stylistic/js/array-element-newline */
-    counters.count(true, false, true, dbRoot.events, (event) => [event.type, event.detail, event.comments].join(', '));
+    count(true, false, false, dbRoot.events, (event) => [event.type, event.detail, event.comments].join(', '), path.join(outputDir, 'goalTimecodes.json'));
     dbRoot.events = dbRoot.events.filter((event) => event.type === 'Goal');
-    counters.count(true, false, true, dbRoot.events, (event) => [event.timecode.toString()].join(', '));
+    count(true, false, false, dbRoot.events, (event) => [event.timecode.toString()].join(', '), path.join(outputDir, 'eventTypes.json'));
 
     dbRoot.events = counters.sortArrayByString(dbRoot.events, (event) => [
         event.timecode,
@@ -179,14 +213,16 @@ async function doIt (): Promise<void> {
         event['player.id'],
     ].join(' '));
 
-    writeFileSync(path.join(getDirname(import.meta.url), 'db.json'), JSON.stringify(dbRoot, null, 2));
+    writeFileSync(path.join(outputDir, 'db.json'), JSON.stringify(dbRoot, null, 2));
     /* eslint-enable @stylistic/js/array-element-newline */
+
+    console.log(`${credits} credits left.`);
 }
 
 doIt().then(() => {
     console.log('Done');
-}).
-    catch((reason: unknown) => {
+})
+    .catch((reason: unknown) => {
         console.log('Error');
         console.log(reason);
     });

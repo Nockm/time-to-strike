@@ -1,8 +1,10 @@
+// import { writeFileSync } from 'fs';
+
 export function sortRecordByKey (record: Record<string, number>): Record<string, number> {
     return Object.fromEntries(Object.entries(record).sort(([item1], [item2]) => item1.localeCompare(item2)));
 }
 
-function sortRecordByValue (record: Record<string, number>): Record<string, number> {
+export function sortRecordByValue (record: Record<string, number>): Record<string, number> {
     return Object.fromEntries(Object.entries(record).sort(([, item1], [, item2]) => item1 - item2));
 }
 
@@ -32,31 +34,6 @@ export function getCounter<T> (items: T[], getKeyValPairFunc: (item: T) => strin
 
         counter[key] += 1;
     });
-
-    return sortRecordByKey(counter);
-
-    return counter;
-}
-
-export function count<T> (
-    sortKeys: boolean,
-    sortVals: boolean,
-    log: boolean,
-    items: T[],
-    getKeyValPairFunc: (item: T) => string,
-): Record<string, number> {
-    let counter = getCounter(items, getKeyValPairFunc);
-
-    if (sortKeys) {
-        counter = sortRecordByKey(counter);
-    }
-    if (sortVals) {
-        counter = sortRecordByValue(counter);
-    }
-
-    if (log) {
-        console.log(JSON.stringify(counter, null, 2));
-    }
 
     return counter;
 }
