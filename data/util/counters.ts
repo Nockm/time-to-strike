@@ -22,11 +22,11 @@ export function sortArrayByNumber<T> (array: T[], sortFunc: (item: T) => number)
 }
 
 
-export function getCounter<T> (items: T[], getKeyValPairFunc: (item: T) => string): Record<string, number> {
+export function getCounter<T> (items: T[], getKey: (item: T) => string): Record<string, number> {
     const counter: Record<string, number> = {};
 
     items.forEach((item) => {
-        const key: string = getKeyValPairFunc(item);
+        const key: string = getKey(item);
 
         if (!(key in counter)) {
             counter[key] = 0;
@@ -36,4 +36,29 @@ export function getCounter<T> (items: T[], getKeyValPairFunc: (item: T) => strin
     });
 
     return counter;
+}
+
+
+export function groupByToRecord <T, K extends string | number> (array: T[], keyFn: (arg0: T) => K): Record<K, T[]> {
+    return array.reduce((acc: Record<K, T[]>, item) => {
+        const key = keyFn(item);
+        if (!acc[key]) {
+            acc[key] = [];
+        }
+        acc[key].push(item);
+        return acc;
+    }, {} as Record<K, T[]>); // eslint-disable-line @typescript-eslint/no-unsafe-type-assertion
+}
+
+export function groupByToTuples<T, K> (array: T[], keyFn: (item: T) => K): [K, T[]][] {
+    const map = new Map<K, T[]>();
+
+    for (const item of array) {
+        const key = keyFn(item);
+        const group = map.get(key) ?? [];
+        group.push(item);
+        map.set(key, group);
+    }
+
+    return Array.from(map.entries());
 }
