@@ -1,57 +1,48 @@
 import type { JSX } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import db from '../data/output/db.json';
-import * as counters from '../data/util/counters.ts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
+import type { TooltipProps } from 'recharts'; // eslint-disable-line no-duplicate-imports
 
-const eventsByTimecode = counters.getCounter(db.events, (event) => event.timecode.toString());
+export interface ChartItem {
+    'fill': string;
+    'summaries': string[];
+    'xlabel': string;
+    'yvalue': number;
+}
 
-const timecodeNumGoalsPairs = Object.entries(eventsByTimecode)
-    .map(([
-        key,
-        value,
-    ]) => {
-        const timeCode = parseInt(key, 10);
-        const numGoals = value;
-        return [
-            timeCode,
-            numGoals,
-        ];
-    });
+export interface ChartSpec {
+    'title': string;
+    'items': ChartItem[];
+}
 
-const statsPeriod1 = timecodeNumGoalsPairs
-    .filter(([timeCode]) => timeCode < 200)
-    .map(([
-        key,
-        value,
-    ]) => ({ 'name': key - 100, value }));
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>): JSX.Element | null => {
+    if (active && payload?.length) {
+        const thing = payload[0].payload;
+        return (
+            <div style={{
+                'backgroundColor': 'white',
+                'border': '1px solid black',
+                'color': 'black',
+                'padding': '10px',
+            }}>
+                <div style={{ 'fontWeight': 'bold' }}>{thing.value} {label} goals scored at '{thing.key}</div>
+                {
+                    thing.summaries.map((summary: string, index: number) => <div key={index}>{summary}</div>)
+                }
+            </div>
+        );
+    }
 
-const statsPeriod2 = timecodeNumGoalsPairs
-    .filter(([timeCode]) => timeCode >= 200)
-    .map(([
-        key,
-        value,
-    ]) => ({ 'name': key - 200 + 45, value }));
+    return null;
+};
 
-export default function MyChart (): JSX.Element {
-    const thing = 25;
+export default function MyChart ({ chartSpec }: { 'chartSpec': ChartSpec }): JSX.Element {
     return (
         <>
-            <div># Goals scored at each minute.</div>
-            <div>First Half</div>
-            <BarChart width={statsPeriod1.length * thing} height={300} data={statsPeriod1}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
+            <BarChart width={2500} height={400} data={chartSpec.items}>
+                <XAxis dataKey="xlabel" angle={90} interval={4} textAnchor="start" height={50} />
                 <YAxis />
-                <Tooltip />
-                <Bar dataKey="value" fill="#8884d8" />
-            </BarChart>
-            <div>Second Half</div>
-            <BarChart width={statsPeriod2.length * thing} height={300} data={statsPeriod2}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="value" fill="#8884d8" />
+                <Tooltip content={CustomTooltip} />
+                <Bar dataKey="yvalue" fill="#8884d8" />
             </BarChart>
         </>
     );
