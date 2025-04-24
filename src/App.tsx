@@ -155,60 +155,63 @@ function App (): JSX.Element {
     const chartSpecs = getChartSpecs(selectedMetricX, selectedMetricGroup, selectedEventTypeKey, db.events);
 
     return (
-        <>
-            {/* Random */}
-            <button onClick={() => {
-                setCount((thisCount) => thisCount + 1);
-            }}>
-                count is {count}
-            </button>
+        <div className="container">
+            <div className="header">
+                {/* Random */}
+                <button onClick={() => {
+                    setCount((thisCount) => thisCount + 1);
+                }}>
+                    count is {count}
+                </button>
 
-            {/* Title */}
-            <div style={{ 'fontSize': 50 }}>{new Date().toUTCString()}</div>
-            <div style={{
-                'display': 'flex',
-                'fontSize': 50,
-                'justifyContent': 'center',
-            }}>
-                <div style={{ 'whiteSpace': 'pre' }}>For each </div>
-                <select style={{ 'fontSize': 50 }} value={selectedMetricGroupKey} onChange={(event) => {
-                    setSelectedMetricGroupKey(event.target.value);
-                }} >
-                    {
-                        metrics.map((metric) => <option key={metric.key} value={metric.key}>{metric.singular}</option>)
-                    }
-                </select>
-                <div style={{ 'whiteSpace': 'pre' }}> show the spread of </div>
+                {/* Title */}
+                <div style={{ 'fontSize': 50 }}>{new Date().toUTCString()}</div>
+                <div style={{
+                    'display': 'flex',
+                    'fontSize': 50,
+                    'justifyContent': 'center',
+                }}>
+                    <div style={{ 'whiteSpace': 'pre' }}>For each </div>
+                    <select style={{ 'fontSize': 50 }} value={selectedMetricGroupKey} onChange={(event) => {
+                        setSelectedMetricGroupKey(event.target.value);
+                    }} >
+                        {
+                            metrics.map((metric) => <option key={metric.key} value={metric.key}>{metric.singular}</option>)
+                        }
+                    </select>
+                    <div style={{ 'whiteSpace': 'pre' }}> show the spread of </div>
 
 
-                <select style={{ 'fontSize': 50 }} value={selectedEventTypeKey} onChange={(event) => {
-                    setSelectedEventTypeKey(event.target.value);
-                }} >
-                    {
-                        eventTypes.map((eventType) => <option key={eventType} value={eventType}>{getEventTypeLoc(eventType).plural || eventType}</option>)
-                    }
-                </select>
+                    <select style={{ 'fontSize': 50 }} value={selectedEventTypeKey} onChange={(event) => {
+                        setSelectedEventTypeKey(event.target.value);
+                    }} >
+                        {
+                            eventTypes.map((eventType) => <option key={eventType} value={eventType}>{getEventTypeLoc(eventType).plural || eventType}</option>)
+                        }
+                    </select>
 
-                <div style={{ 'whiteSpace': 'pre' }}> across </div>
-                <select style={{ 'fontSize': 50 }} value={selectedMetricXKey} onChange={(event) => {
-                    setSelectedMetricXKey(event.target.value);
-                }} >
-                    {
-                        metrics.map((metric) => <option key={metric.key} value={metric.key}>{metric.plural}</option>)
-                    }
-                </select>
+                    <div style={{ 'whiteSpace': 'pre' }}> across </div>
+                    <select style={{ 'fontSize': 50 }} value={selectedMetricXKey} onChange={(event) => {
+                        setSelectedMetricXKey(event.target.value);
+                    }} >
+                        {
+                            metrics.map((metric) => <option key={metric.key} value={metric.key}>{metric.plural}</option>)
+                        }
+                    </select>
+                </div>
             </div>
-
-            {/* Charts */}
-            <div className="card">
-                {
-                    chartSpecs.map((chartSpec) => <div key={chartSpec.title}>
-                        <div style={{ 'fontSize': 30 }}>{chartSpec.title}</div>
-                        <MyChart chartSpec={chartSpec}></MyChart>
-                    </div>)
-                }
+            <div className="content">
+                {/* Charts */}
+                <div className="card">
+                    {
+                        chartSpecs.map((chartSpec) => <div key={chartSpec.title}>
+                            <div style={{ 'fontSize': 30 }}>{chartSpec.title}</div>
+                            <MyChart chartSpec={chartSpec}></MyChart>
+                        </div>)
+                    }
+                </div>
             </div>
-        </>
+        </div>
     );
 }
 

@@ -66,3 +66,21 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.container {
+  background: black;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.header {
+  background: #eee;
+  flex: 0 0 auto;
+}
+
+.content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
