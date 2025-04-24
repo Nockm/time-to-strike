@@ -56,13 +56,11 @@ function apiEventToDbEvent (apiFixtureInfo: Api.FixtureInfo, apiEvent: Api.Event
 
     timecode += apiEvent.time.extra || 0;
 
-    // const player_id = apiEvent.player.id;
-    // const teamIndex = apiFixtureInfo.lineups.findIndex((lineup) => )
-
     const dbEvent: Db.Event = {
         /* eslint-disable @typescript-eslint/naming-convention */
         'c_summary': `${apiFixtureInfo.teams.home.name} ${apiFixtureInfo.goals.home}-${apiFixtureInfo.goals.away} ${apiFixtureInfo.teams.away.name} on ${apiFixtureInfo.fixture.date.slice(0, 10)}`,
         'c_timecode': timecode,
+        'c_total_goals': apiFixtureInfo.score.fulltime.home + apiFixtureInfo.score.fulltime.away,
         'e_assist_id': apiEvent.assist.id,
         'e_assist_name': apiEvent.assist.name,
         'e_comments': apiEvent.comments || '',
@@ -76,18 +74,17 @@ function apiEventToDbEvent (apiFixtureInfo: Api.FixtureInfo, apiEvent: Api.Event
         'e_type': apiEvent.type,
         'f_fixture_id': apiFixtureInfo.fixture.id,
         'f_fixture_referee': apiFixtureInfo.fixture.referee,
+        'f_fixture_venue_name': apiFixtureInfo.fixture.venue.name,
+        'f_goals_away': apiFixtureInfo.goals.away,
+        'f_goals_home': apiFixtureInfo.goals.home,
         'f_league_country': apiFixtureInfo.league.country,
-        // 'f_fixture_venue_name': apiFixtureInfo.fixture.venue.name,
-        // 'f_goals_home': apiFixtureInfo.goals.home,
-        // 'f_goals_away': apiFixtureInfo.goals.away,
-        // 'f_score_fulltime_home': apiFixtureInfo.score.fulltime.home,
-        // 'f_score_fulltime_away': apiFixtureInfo.score.fulltime.away,
-        // 'f_lineups_0_formation': apiFixtureInfo.lineups[0].formation,
-        // 'f_lineups_1_formation': apiFixtureInfo.lineups[1].formation,
-        // 'c_total_goals': apiFixtureInfo.score.fulltime.home + apiFixtureInfo.score.fulltime.away,
         'f_league_id': apiFixtureInfo.league.id,
         'f_league_round': apiFixtureInfo.league.round,
         'f_league_season': apiFixtureInfo.league.season,
+        'f_lineups_0_formation': apiFixtureInfo.lineups[0].formation,
+        'f_lineups_1_formation': apiFixtureInfo.lineups[1].formation,
+        'f_score_fulltime_away': apiFixtureInfo.score.fulltime.away,
+        'f_score_fulltime_home': apiFixtureInfo.score.fulltime.home,
         'f_teams_away_name': apiFixtureInfo.teams.away.name,
         'f_teams_home_name': apiFixtureInfo.teams.home.name,
         // 'team.logo': gameEvent.team.logo,

@@ -161,6 +161,38 @@ export interface Event {
     /* eslint-enable @typescript-eslint/no-redundant-type-constituents */
 }
 
+export interface Lineup {
+    'team': {
+        'id': number;
+        'name': string;
+        'logo': string;
+        'colors': {
+            'player': {
+                'primary': string;
+                'number': string;
+                'border': string;
+            };
+            'goalkeeper': {
+                'primary': string;
+                'number': string;
+                'border': string;
+            };
+        };
+    };
+    'coach': {
+        'id': number;
+        'name': string;
+        'photo': string;
+    };
+    'formation': string;
+    'startXI': {
+        'player': Player;
+    }[];
+    'substitutes': {
+        'player': Player;
+    }[];
+}
+
 interface ExtraFixtureInfo {
     'events': Event[];
     // 'lineups': { // eslint-disable-line @typescript-eslint/no-empty-object-type
@@ -169,37 +201,7 @@ interface ExtraFixtureInfo {
     // }[];
     // 'players': { // eslint-disable-line @typescript-eslint/no-empty-object-type
     // }[];
-    'lineups': {
-        'team': {
-            'id': number;
-            'name': string;
-            'logo': string;
-            'colors': {
-                'player': {
-                    'primary': string;
-                    'number': string;
-                    'border': string;
-                };
-                'goalkeeper': {
-                    'primary': string;
-                    'number': string;
-                    'border': string;
-                };
-            };
-        };
-        'coach': {
-            'id': number;
-            'name': string;
-            'photo': string;
-        };
-        'formation': string;
-        'startXI': {
-            'player': Player;
-        }[];
-        'substitutes': {
-            'player': Player;
-        }[];
-    }[];
+    'lineups': Lineup[];
     'statistics': {
         'team': {
             'id': number;
