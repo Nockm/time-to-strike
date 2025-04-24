@@ -169,7 +169,7 @@ async function processSeason ({
                 credits -= 1;
 
                 // Wait, as the rate limit is 10 calls per minute.
-                await delay(10000);
+                await delay(7500);
             }
 
             numFixturesProcessed += 1;
