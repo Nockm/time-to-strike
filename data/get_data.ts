@@ -27,13 +27,22 @@ async function getCreditsLeft (): Promise<number> {
     return numCallsLeft;
 }
 
+const USE_ALL_CREDITS = -1;
+const USE_NO_CREDITS = 0;
+
 async function getCredits (requestedCredits: number): Promise<number> {
     const creditsLeft = await getCreditsLeft();
 
     // Default to how many credits we actually have.
-    let credits = requestedCredits >= 0
-        ? requestedCredits
-        : creditsLeft;
+    let credits = 0;
+
+    if (requestedCredits === USE_ALL_CREDITS) {
+        credits = creditsLeft;
+    }
+
+    if (requestedCredits === USE_NO_CREDITS) {
+        credits = 0;
+    }
 
     // Ensure we don't use more credits than we actually have.
     credits = Math.min(credits, creditsLeft);
@@ -203,7 +212,9 @@ export function count<T> (
     return counter;
 }
 
-async function doIt (requestedCredits = -1): Promise<void> {
+async function doIt ({
+    requestedCredits = 0,
+}): Promise<void> {
     const dbRoot: Db.Root = {
         'events': [],
     };
@@ -234,7 +245,13 @@ async function doIt (requestedCredits = -1): Promise<void> {
     console.log(`${credits} credits left.`);
 }
 
-doIt().then(() => {
+const args = process.argv.slice(2);
+
+const opts = {
+    'requestedCredits': args.length > 0 && parseInt(args[0], 10) || 0,
+};
+
+doIt(opts).then(() => {
     console.log('Done');
 })
     .catch((reason: unknown) => {
