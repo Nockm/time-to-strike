@@ -39,7 +39,7 @@ export default function MyChart ({ chartSpec }: { 'chartSpec': ChartSpec }): JSX
     return (
         <>
             <BarChart width={2500} height={400} data={chartSpec.items}>
-                <XAxis dataKey="xlabel" angle={90} interval={4} textAnchor="start" height={50} />
+                <XAxis dataKey="xlabel" angle={90} interval={0} textAnchor="start" height={150} />
                 <YAxis />
                 <Tooltip content={CustomTooltip} />
                 <Bar dataKey="yvalue" fill="#8884d8" />

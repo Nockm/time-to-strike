@@ -62,3 +62,11 @@ export function groupByToTuples<T, K> (array: T[], keyFn: (item: T) => K): [K, T
 
     return Array.from(map.entries());
 }
+
+function onlyUnique<T> (value: T, index: number, array: T[]): boolean {
+    return array.indexOf(value) === index;
+}
+
+export function getUniqueValues<T> (array: T[]): T[] {
+    return array.filter(onlyUnique);
+}

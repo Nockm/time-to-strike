@@ -56,23 +56,41 @@ function apiEventToDbEvent (apiFixtureInfo: Api.FixtureInfo, apiEvent: Api.Event
 
     timecode += apiEvent.time.extra || 0;
 
+    // const player_id = apiEvent.player.id;
+    // const teamIndex = apiFixtureInfo.lineups.findIndex((lineup) => )
+
     const dbEvent: Db.Event = {
         /* eslint-disable @typescript-eslint/naming-convention */
-        'assist.id': apiEvent.assist.id,
-        'assist.name': apiEvent.assist.name,
-        'comments': apiEvent.comments || '',
-        'detail': apiEvent.detail,
-        'fixtureId': apiFixtureInfo.fixture.id,
-        'player.id': apiEvent.player.id,
-        'player.name': apiEvent.player.name,
-        'summary': `${apiFixtureInfo.teams.home.name} ${apiFixtureInfo.goals.home}-${apiFixtureInfo.goals.away} ${apiFixtureInfo.teams.away.name} on ${apiFixtureInfo.fixture.date.slice(0, 10)}`,
-        'team.id': apiEvent.team.id,
+        'c_summary': `${apiFixtureInfo.teams.home.name} ${apiFixtureInfo.goals.home}-${apiFixtureInfo.goals.away} ${apiFixtureInfo.teams.away.name} on ${apiFixtureInfo.fixture.date.slice(0, 10)}`,
+        'c_timecode': timecode,
+        'e_assist_id': apiEvent.assist.id,
+        'e_assist_name': apiEvent.assist.name,
+        'e_comments': apiEvent.comments || '',
+        'e_detail': apiEvent.detail,
+        'e_player_id': apiEvent.player.id,
+        'e_player_name': apiEvent.player.name,
+        'e_team_id': apiEvent.team.id,
+        'e_team_name': apiEvent.team.name,
+        'e_time_elapsed': apiEvent.time.elapsed,
+        'e_time_extra': apiEvent.time.extra,
+        'e_type': apiEvent.type,
+        'f_fixture_id': apiFixtureInfo.fixture.id,
+        'f_fixture_referee': apiFixtureInfo.fixture.referee,
+        'f_league_country': apiFixtureInfo.league.country,
+        // 'f_fixture_venue_name': apiFixtureInfo.fixture.venue.name,
+        // 'f_goals_home': apiFixtureInfo.goals.home,
+        // 'f_goals_away': apiFixtureInfo.goals.away,
+        // 'f_score_fulltime_home': apiFixtureInfo.score.fulltime.home,
+        // 'f_score_fulltime_away': apiFixtureInfo.score.fulltime.away,
+        // 'f_lineups_0_formation': apiFixtureInfo.lineups[0].formation,
+        // 'f_lineups_1_formation': apiFixtureInfo.lineups[1].formation,
+        // 'c_total_goals': apiFixtureInfo.score.fulltime.home + apiFixtureInfo.score.fulltime.away,
+        'f_league_id': apiFixtureInfo.league.id,
+        'f_league_round': apiFixtureInfo.league.round,
+        'f_league_season': apiFixtureInfo.league.season,
+        'f_teams_away_name': apiFixtureInfo.teams.away.name,
+        'f_teams_home_name': apiFixtureInfo.teams.home.name,
         // 'team.logo': gameEvent.team.logo,
-        'team.name': apiEvent.team.name,
-        'time.elapsed': apiEvent.time.elapsed,
-        'time.extra': apiEvent.time.extra,
-        timecode,
-        'type': apiEvent.type,
         /* eslint-enable @typescript-eslint/naming-convention */
     };
 
@@ -202,15 +220,15 @@ async function doIt (requestedCredits = -1): Promise<void> {
     ensureEmptyDir(outputDir);
 
     /* eslint-disable @stylistic/js/array-element-newline */
-    count(true, false, false, dbRoot.events, (event) => [event.type, event.detail, event.comments].join(', '), path.join(outputDir, 'goalTimecodes.json'));
-    dbRoot.events = dbRoot.events.filter((event) => event.type === 'Goal');
-    count(true, false, false, dbRoot.events, (event) => [event.timecode.toString()].join(', '), path.join(outputDir, 'eventTypes.json'));
+    count(true, false, false, dbRoot.events, (event) => [event.e_type, event.e_detail, event.e_comments].join(', '), path.join(outputDir, 'goalTimecodes.json'));
+    // dbRoot.events = dbRoot.events.filter((event) => event.type === 'Goal');
+    count(true, false, false, dbRoot.events, (event) => [event.c_timecode.toString()].join(', '), path.join(outputDir, 'eventTypes.json'));
 
     dbRoot.events = counters.sortArrayByString(dbRoot.events, (event) => [
-        event.timecode,
-        event.fixtureId,
-        event.type,
-        event['player.id'],
+        event.c_timecode,
+        event.f_fixture_id,
+        event.e_type,
+        event.e_player_id,
     ].join(' '));
 
     writeFileSync(path.join(outputDir, 'db.json'), JSON.stringify(dbRoot, null, 2));
