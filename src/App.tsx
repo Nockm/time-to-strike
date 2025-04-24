@@ -157,13 +157,6 @@ function App (): JSX.Element {
     return (
         <div className="container">
             <div className="header">
-                {/* Random */}
-                <button onClick={() => {
-                    setCount((thisCount) => thisCount + 1);
-                }}>
-                    count is {count}
-                </button>
-
                 {/* Title */}
                 <div style={{ 'fontSize': 50 }}>{new Date().toUTCString()}</div>
                 <div style={{
@@ -202,7 +195,7 @@ function App (): JSX.Element {
             </div>
             <div className="content">
                 {/* Charts */}
-                <div className="card">
+                <div>
                     {
                         chartSpecs.map((chartSpec) => <div key={chartSpec.title}>
                             <div style={{ 'fontSize': 30 }}>{chartSpec.title}</div>
