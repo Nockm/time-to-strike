@@ -223,6 +223,7 @@ async function doIt ({
 
     credits = await processSeason({ 'creditsAvailable': credits, dbRoot, 'league': 39, 'season': 2023 });
     credits = await processSeason({ 'creditsAvailable': credits, dbRoot, 'league': 39, 'season': 2022 });
+    credits = await processSeason({ 'creditsAvailable': credits, dbRoot, 'league': 39, 'season': 2021 });
 
     const outputDir = path.join(getDirname(import.meta.url), 'output');
     ensureEmptyDir(outputDir);
