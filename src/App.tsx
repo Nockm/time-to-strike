@@ -54,9 +54,37 @@ interface Metric {
 }
 
 const metrics: Metric[] = [
-    { 'func': (item: Db.Event) => item.c_timecode.toString(), 'key': 'game time', 'singular': 'game minute', 'plural': 'game minutes', 'formatter': formatTimecode },
-    { 'func': (item: Db.Event) => item.e_team_name, 'key': 'teams', 'singular': 'team', 'plural': 'teams' },
-    { 'func': (item: Db.Event) => item.e_player_name, 'key': 'players', 'singular': 'player', 'plural': 'players' },
+    /* eslint-disable @stylistic/js/no-multi-spaces */
+    { 'func': (item: Db.Event) => item.c_summary,                         'key': 'c_summary',             'singular': 'c_summary',              'plural': 'c_summary' },
+    { 'func': (item: Db.Event) => item.c_timecode.toString(),             'key': 'game time',             'singular': 'game minute',            'plural': 'game minutes', 'formatter': formatTimecode },
+    { 'func': (item: Db.Event) => item.c_total_goals.toString(),          'key': 'c_total_goals',         'singular': 'c_total_goals',          'plural': 'c_total_goals' },
+    { 'func': (item: Db.Event) => item.e_assist_id?.toString() || '',     'key': 'e_assist_id',           'singular': 'e_assist_id',            'plural': 'e_assist_id' },
+    { 'func': (item: Db.Event) => item.e_assist_name || '',               'key': 'e_assist_name',         'singular': 'e_assist_name',          'plural': 'e_assist_name' },
+    { 'func': (item: Db.Event) => item.e_comments,                        'key': 'e_comments',            'singular': 'e_comments',             'plural': 'e_comments' },
+    { 'func': (item: Db.Event) => item.e_detail,                          'key': 'e_detail',              'singular': 'e_detail',               'plural': 'e_detail' },
+    { 'func': (item: Db.Event) => item.e_player_id.toString(),            'key': 'e_player_id',           'singular': 'e_player_id',            'plural': 'e_player_id' },
+    { 'func': (item: Db.Event) => item.e_player_name,                     'key': 'players',               'singular': 'player',                 'plural': 'players' },
+    { 'func': (item: Db.Event) => item.e_team_id.toString(),              'key': 'e_team_id',             'singular': 'e_team_id',              'plural': 'e_team_id' },
+    { 'func': (item: Db.Event) => item.e_team_name,                       'key': 'teams',                 'singular': 'team',                   'plural': 'teams' },
+    { 'func': (item: Db.Event) => item.e_time_elapsed.toString(),         'key': 'e_time_elapsed',        'singular': 'e_time_elapsed',         'plural': 'e_time_elapsed' },
+    { 'func': (item: Db.Event) => item.e_time_extra?.toString() || '',    'key': 'e_time_extra',          'singular': 'e_time_extra',           'plural': 'e_time_extra' },
+    { 'func': (item: Db.Event) => item.e_type,                            'key': 'e_type',                'singular': 'e_type',                 'plural': 'e_type' },
+    { 'func': (item: Db.Event) => item.f_fixture_id.toString(),           'key': 'f_fixture_id',          'singular': 'f_fixture_id',           'plural': 'f_fixture_id' },
+    { 'func': (item: Db.Event) => item.f_fixture_referee,                 'key': 'f_fixture_referee',     'singular': 'f_fixture_referee',      'plural': 'f_fixture_referee' },
+    { 'func': (item: Db.Event) => item.f_fixture_venue_name,              'key': 'f_fixture_venue_name',  'singular': 'f_fixture_venue_name',   'plural': 'f_fixture_venue_name' },
+    { 'func': (item: Db.Event) => item.f_goals_away.toString(),           'key': 'f_goals_away',          'singular': 'f_goals_away',           'plural': 'f_goals_away' },
+    { 'func': (item: Db.Event) => item.f_goals_home.toString(),           'key': 'f_goals_home',          'singular': 'f_goals_home',           'plural': 'f_goals_home' },
+    { 'func': (item: Db.Event) => item.f_league_country,                  'key': 'f_league_country',      'singular': 'f_league_country',       'plural': 'f_league_country' },
+    { 'func': (item: Db.Event) => item.f_league_id.toString(),            'key': 'f_league_id',           'singular': 'f_league_id',            'plural': 'f_league_id' },
+    { 'func': (item: Db.Event) => item.f_league_round,                    'key': 'f_league_round',        'singular': 'f_league_round',         'plural': 'f_league_round' },
+    { 'func': (item: Db.Event) => item.f_league_season.toString(),        'key': 'f_league_season',       'singular': 'f_league_season',        'plural': 'f_league_season' },
+    { 'func': (item: Db.Event) => item.f_lineups_0_formation,             'key': 'f_lineups_0_formation', 'singular': 'f_lineups_0_formation',  'plural': 'f_lineups_0_formation' },
+    { 'func': (item: Db.Event) => item.f_lineups_1_formation,             'key': 'f_lineups_1_formation', 'singular': 'f_lineups_1_formation',  'plural': 'f_lineups_1_formation' },
+    { 'func': (item: Db.Event) => item.f_score_fulltime_away.toString(),  'key': 'f_score_fulltime_away', 'singular': 'f_score_fulltime_away',  'plural': 'f_score_fulltime_away' },
+    { 'func': (item: Db.Event) => item.f_score_fulltime_home.toString(),  'key': 'f_score_fulltime_home', 'singular': 'f_score_fulltime_home',  'plural': 'f_score_fulltime_home' },
+    { 'func': (item: Db.Event) => item.f_teams_away_name,                 'key': 'f_teams_away_name',     'singular': 'f_teams_away_name',      'plural': 'f_teams_away_name' },
+    { 'func': (item: Db.Event) => item.f_teams_home_name,                 'key': 'f_teams_home_name',     'singular': 'f_teams_home_name',      'plural': 'f_teams_home_name' },
+    /* eslint-enable @stylistic/js/no-multi-spaces */
 ];
 /* eslint-enable sort-keys */
 
@@ -64,7 +92,7 @@ const allEventTypes: string[] = db.events.map((event) => event.e_type);
 const eventTypes: string[] = counters.getUniqueValues<string>(allEventTypes);
 
 
-function getChartSpec (metricX: Metric, dbEvents: Db.Event[], groupName: string): ChartSpec {
+function getChartSpec (metricX: Metric, eventTypeFilter: string, dbEvents: Db.Event[], groupName: string): ChartSpec {
     const metricXFunc = metricX.func;
 
     const timecodeEventsPairs = counters.groupByToTuples<Db.Event, string>(dbEvents, metricXFunc);
@@ -90,7 +118,7 @@ function getChartSpec (metricX: Metric, dbEvents: Db.Event[], groupName: string)
 
     return {
         items,
-        'title': `${groupName}: Spread of ${metricX.plural} across ${getEventTypeLoc(groupName).plural}}`,
+        'title': `[${groupName}] ${getEventTypeLoc(eventTypeFilter).plural} for each ${metricX.singular}`,
     };
 }
 
@@ -101,7 +129,7 @@ function getChartSpecs (metricX: Metric, metricGroup: Metric, eventTypeFilter: s
     const chartSpecs = nameEventsPairs.map(([
         name,
         events,
-    ]) => getChartSpec(metricX, events, name));
+    ]) => getChartSpec(metricX, eventTypeFilter, events, name));
 
     return chartSpecs;
 }
