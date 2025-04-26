@@ -36,3 +36,5 @@ export interface Event {
 export interface Root {
     'events': Event[];
 }
+
+export type EventKey = keyof Event;

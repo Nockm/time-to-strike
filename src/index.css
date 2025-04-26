@@ -35,3 +35,15 @@ h1 {
   flex: 1 1 auto;
   overflow-y: auto;
 }
+
+.tooltip {
+  background-color: white;
+  border: 1px solid black;
+  color: black;
+  padding: 10px;
+}
+
+.tooltip-header {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
