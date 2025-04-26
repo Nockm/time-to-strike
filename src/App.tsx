@@ -2,6 +2,7 @@ import './App.css';
 import type { JSX } from 'react';
 import { useState } from 'react'; // eslint-disable-line no-duplicate-imports
 import * as counters from '../data/util/counters.ts';
+import * as stringUtil from '../data/util/stringUtil.ts';
 import MyChart from './MyChart';
 import type { ChartSpec, ChartItem } from './MyChart'; // eslint-disable-line no-duplicate-imports
 import type * as Db from '../data/db/dbTypes.ts';
@@ -51,40 +52,77 @@ interface Metric {
     'key': string;
     'plural': string;
     'singular': string;
+    'Plural': string;
+    'Singular': string;
+}
+
+function keyToSingular (key: string): string {
+    let ret = key;
+
+    ret = stringUtil.removePrefix(ret, 'c_');
+    ret = stringUtil.removePrefix(ret, 'e_');
+    ret = stringUtil.removePrefix(ret, 'f_');
+    ret = stringUtil.replaceAll(ret, '_', ' ');
+
+    return ret;
+}
+type DbEventKey = keyof Db.Event;
+
+function getMetric (opts: {
+    'func'?: MetricFunc;
+    'key': DbEventKey;
+    'singular'?: string;
+    'plural'?: string;
+    'formatter'?: (value: string) => string;
+}): Metric {
+    const { key } = opts;
+
+    const func = opts.func || ((item: Db.Event): string => (item[key] || '').toString());
+
+    const singular = opts.singular || keyToSingular(key);
+
+    const plural = opts.plural || stringUtil.singularToPlural(singular);
+
+    return {
+        func,
+        key,
+        singular,
+        plural,
+        'Singular': singular.charAt(0).toUpperCase() + singular.slice(1),
+        'Plural': plural.charAt(0).toUpperCase() + plural.slice(1),
+    };
 }
 
 const metrics: Metric[] = [
-    /* eslint-disable @stylistic/js/no-multi-spaces */
-    { 'func': (item: Db.Event) => item.c_summary,                         'key': 'c_summary',             'singular': 'c_summary',              'plural': 'c_summary' },
-    { 'func': (item: Db.Event) => item.c_timecode.toString(),             'key': 'game time',             'singular': 'game minute',            'plural': 'game minutes', 'formatter': formatTimecode },
-    { 'func': (item: Db.Event) => item.c_total_goals.toString(),          'key': 'c_total_goals',         'singular': 'c_total_goals',          'plural': 'c_total_goals' },
-    { 'func': (item: Db.Event) => item.e_assist_id?.toString() || '',     'key': 'e_assist_id',           'singular': 'e_assist_id',            'plural': 'e_assist_id' },
-    { 'func': (item: Db.Event) => item.e_assist_name || '',               'key': 'e_assist_name',         'singular': 'e_assist_name',          'plural': 'e_assist_name' },
-    { 'func': (item: Db.Event) => item.e_comments,                        'key': 'e_comments',            'singular': 'e_comments',             'plural': 'e_comments' },
-    { 'func': (item: Db.Event) => item.e_detail,                          'key': 'e_detail',              'singular': 'e_detail',               'plural': 'e_detail' },
-    { 'func': (item: Db.Event) => item.e_player_id.toString(),            'key': 'e_player_id',           'singular': 'e_player_id',            'plural': 'e_player_id' },
-    { 'func': (item: Db.Event) => item.e_player_name,                     'key': 'players',               'singular': 'player',                 'plural': 'players' },
-    { 'func': (item: Db.Event) => item.e_team_id.toString(),              'key': 'e_team_id',             'singular': 'e_team_id',              'plural': 'e_team_id' },
-    { 'func': (item: Db.Event) => item.e_team_name,                       'key': 'teams',                 'singular': 'team',                   'plural': 'teams' },
-    { 'func': (item: Db.Event) => item.e_time_elapsed.toString(),         'key': 'e_time_elapsed',        'singular': 'e_time_elapsed',         'plural': 'e_time_elapsed' },
-    { 'func': (item: Db.Event) => item.e_time_extra?.toString() || '',    'key': 'e_time_extra',          'singular': 'e_time_extra',           'plural': 'e_time_extra' },
-    { 'func': (item: Db.Event) => item.e_type,                            'key': 'e_type',                'singular': 'e_type',                 'plural': 'e_type' },
-    { 'func': (item: Db.Event) => item.f_fixture_id.toString(),           'key': 'f_fixture_id',          'singular': 'f_fixture_id',           'plural': 'f_fixture_id' },
-    { 'func': (item: Db.Event) => item.f_fixture_referee,                 'key': 'f_fixture_referee',     'singular': 'f_fixture_referee',      'plural': 'f_fixture_referee' },
-    { 'func': (item: Db.Event) => item.f_fixture_venue_name,              'key': 'f_fixture_venue_name',  'singular': 'f_fixture_venue_name',   'plural': 'f_fixture_venue_name' },
-    { 'func': (item: Db.Event) => item.f_goals_away.toString(),           'key': 'f_goals_away',          'singular': 'f_goals_away',           'plural': 'f_goals_away' },
-    { 'func': (item: Db.Event) => item.f_goals_home.toString(),           'key': 'f_goals_home',          'singular': 'f_goals_home',           'plural': 'f_goals_home' },
-    { 'func': (item: Db.Event) => item.f_league_country,                  'key': 'f_league_country',      'singular': 'f_league_country',       'plural': 'f_league_country' },
-    { 'func': (item: Db.Event) => item.f_league_id.toString(),            'key': 'f_league_id',           'singular': 'f_league_id',            'plural': 'f_league_id' },
-    { 'func': (item: Db.Event) => item.f_league_round,                    'key': 'f_league_round',        'singular': 'f_league_round',         'plural': 'f_league_round' },
-    { 'func': (item: Db.Event) => item.f_league_season.toString(),        'key': 'f_league_season',       'singular': 'f_league_season',        'plural': 'f_league_season' },
-    { 'func': (item: Db.Event) => item.f_lineups_0_formation,             'key': 'f_lineups_0_formation', 'singular': 'f_lineups_0_formation',  'plural': 'f_lineups_0_formation' },
-    { 'func': (item: Db.Event) => item.f_lineups_1_formation,             'key': 'f_lineups_1_formation', 'singular': 'f_lineups_1_formation',  'plural': 'f_lineups_1_formation' },
-    { 'func': (item: Db.Event) => item.f_score_fulltime_away.toString(),  'key': 'f_score_fulltime_away', 'singular': 'f_score_fulltime_away',  'plural': 'f_score_fulltime_away' },
-    { 'func': (item: Db.Event) => item.f_score_fulltime_home.toString(),  'key': 'f_score_fulltime_home', 'singular': 'f_score_fulltime_home',  'plural': 'f_score_fulltime_home' },
-    { 'func': (item: Db.Event) => item.f_teams_away_name,                 'key': 'f_teams_away_name',     'singular': 'f_teams_away_name',      'plural': 'f_teams_away_name' },
-    { 'func': (item: Db.Event) => item.f_teams_home_name,                 'key': 'f_teams_home_name',     'singular': 'f_teams_home_name',      'plural': 'f_teams_home_name' },
-    /* eslint-enable @stylistic/js/no-multi-spaces */
+    getMetric({ 'key': 'c_summary' }),
+    getMetric({ 'key': 'c_timecode', 'formatter': formatTimecode }),
+    getMetric({ 'key': 'c_total_goals' }),
+    getMetric({ 'key': 'e_assist_id' }),
+    getMetric({ 'key': 'e_assist_name' }),
+    getMetric({ 'key': 'e_comments' }),
+    getMetric({ 'key': 'e_detail' }),
+    getMetric({ 'key': 'e_player_id' }),
+    getMetric({ 'key': 'e_player_name' }),
+    getMetric({ 'key': 'e_team_id' }),
+    getMetric({ 'key': 'e_team_name' }),
+    getMetric({ 'key': 'e_time_elapsed' }),
+    getMetric({ 'key': 'e_time_extra' }),
+    getMetric({ 'key': 'e_type' }),
+    getMetric({ 'key': 'f_fixture_id' }),
+    getMetric({ 'key': 'f_fixture_referee' }),
+    getMetric({ 'key': 'f_fixture_venue_name' }),
+    getMetric({ 'key': 'f_goals_away' }),
+    getMetric({ 'key': 'f_goals_home' }),
+    getMetric({ 'key': 'f_league_country' }),
+    getMetric({ 'key': 'f_league_id' }),
+    getMetric({ 'key': 'f_league_round' }),
+    getMetric({ 'key': 'f_league_season' }),
+    getMetric({ 'key': 'f_lineups_0_formation' }),
+    getMetric({ 'key': 'f_lineups_1_formation' }),
+    getMetric({ 'key': 'f_score_fulltime_away' }),
+    getMetric({ 'key': 'f_score_fulltime_home' }),
+    getMetric({ 'key': 'f_teams_away_name' }),
+    getMetric({ 'key': 'f_teams_home_name' }),
 ];
 /* eslint-enable sort-keys */
 
@@ -136,7 +174,6 @@ function getChartSpecs (metricX: Metric, metricGroup: Metric, eventTypeFilter: s
 
 function App (): JSX.Element {
     /* eslint-disable @stylistic/js/array-element-newline */
-    const [count, setCount] = useState(0);
     const [selectedMetricXKey, setSelectedMetricXKey] = useState<string>(metrics[0].key);
     const [selectedMetricGroupKey, setSelectedMetricGroupKey] = useState<string>(metrics[1].key);
     const [selectedEventTypeKey, setSelectedEventTypeKey] = useState<string>(eventTypes[0]);
@@ -164,15 +201,7 @@ function App (): JSX.Element {
                     'fontSize': 50,
                     'justifyContent': 'center',
                 }}>
-                    <div style={{ 'whiteSpace': 'pre' }}>For each </div>
-                    <select style={{ 'fontSize': 50 }} value={selectedMetricGroupKey} onChange={(event) => {
-                        setSelectedMetricGroupKey(event.target.value);
-                    }} >
-                        {
-                            metrics.map((metric) => <option key={metric.key} value={metric.key}>{metric.singular}</option>)
-                        }
-                    </select>
-                    <div style={{ 'whiteSpace': 'pre' }}> show the spread of </div>
+                    <div style={{ 'whiteSpace': 'pre' }}>Show </div>
 
 
                     <select style={{ 'fontSize': 50 }} value={selectedEventTypeKey} onChange={(event) => {
@@ -189,6 +218,22 @@ function App (): JSX.Element {
                     }} >
                         {
                             metrics.map((metric) => <option key={metric.key} value={metric.key}>{metric.plural}</option>)
+                        }
+                    </select>
+                </div>
+
+                <div style={{
+                    'display': 'flex',
+                    'fontSize': 50,
+                    'justifyContent': 'center',
+                    'position': 'sticky',
+                }}>
+                    <div style={{ 'whiteSpace': 'pre' }}>For each </div>
+                    <select style={{ 'fontSize': 50 }} value={selectedMetricGroupKey} onChange={(event) => {
+                        setSelectedMetricGroupKey(event.target.value);
+                    }} >
+                        {
+                            metrics.map((metric) => <option key={metric.key} value={metric.key}>{metric.singular}</option>)
                         }
                     </select>
                 </div>
