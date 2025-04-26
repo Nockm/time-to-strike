@@ -46,9 +46,12 @@ function getEventTypeLoc (key: string): LocalisationEntry {
 
 type MetricFunc = (event: Db.Event) => string;
 
+type GapFillerInner = ((items: ChartItem[]) => ChartItem[]);
+
 interface Metric {
     'formatter'?: (value: string) => string;
     'func': MetricFunc;
+    'gapFillerInner'?: GapFillerInner;
     'key': string;
     'plural': string;
     'singular': string;
@@ -70,6 +73,7 @@ type DbEventKey = keyof Db.Event;
 
 function getMetric (opts: {
     'func'?: MetricFunc;
+    'gapFillerInner'?: GapFillerInner;
     'key': DbEventKey;
     'singular'?: string;
     'plural'?: string;
@@ -86,6 +90,8 @@ function getMetric (opts: {
     return {
         func,
         key,
+        'formatter': opts.formatter || ((value: string): string => value),
+        'gapFillerInner': opts.gapFillerInner,
         singular,
         plural,
         'Singular': singular.charAt(0).toUpperCase() + singular.slice(1),
@@ -93,9 +99,40 @@ function getMetric (opts: {
     };
 }
 
+function gapFillerInnerTimecode (items: ChartItem[]): ChartItem[] {
+    const newItems: ChartItem[] = [];
+
+    function setTimecode (timecode: number): void {
+        const timecodeString = timecode.toString();
+        const foundItem = items.find((item) => item.xlabel === timecodeString);
+
+        if (foundItem) {
+            newItems.push(foundItem);
+        } else {
+            newItems.push({
+                'fill': 'gray',
+                'summaries': [],
+                'xlabel': timecodeString,
+                'yvalue': 0,
+            });
+        }
+    }
+
+
+    for (let timecode = 101; timecode < 160; timecode += 1) {
+        setTimecode(timecode);
+    }
+
+    for (let timecode = 201; timecode < 260; timecode += 1) {
+        setTimecode(timecode);
+    }
+
+    return newItems;
+}
+
 const metrics: Metric[] = [
     getMetric({ 'key': 'c_summary' }),
-    getMetric({ 'key': 'c_timecode', 'formatter': formatTimecode }),
+    getMetric({ 'key': 'c_timecode', 'formatter': formatTimecode, 'gapFillerInner': gapFillerInnerTimecode }),
     getMetric({ 'key': 'c_total_goals' }),
     getMetric({ 'key': 'e_assist_id' }),
     getMetric({ 'key': 'e_assist_name' }),
@@ -126,6 +163,10 @@ const metrics: Metric[] = [
 ];
 /* eslint-enable sort-keys */
 
+const metricTeamName = metrics.find((item) => item.key === 'e_team_name');
+const metricTimecode = metrics.find((item) => item.key === 'c_timecode');
+const eventTypeGoal = 'Goal';
+
 const allEventTypes: string[] = db.events.map((event) => event.e_type);
 const eventTypes: string[] = counters.getUniqueValues<string>(allEventTypes);
 
@@ -135,24 +176,33 @@ function getChartSpec (metricX: Metric, eventTypeFilter: string, dbEvents: Db.Ev
 
     const timecodeEventsPairs = counters.groupByToTuples<Db.Event, string>(dbEvents, metricXFunc);
 
-    const items: ChartItem[] = timecodeEventsPairs.map(([
+    let items: ChartItem[] = timecodeEventsPairs.map(([
         xvalue,
         events,
     ]) => {
         const yvalue = events.length;
-        const xlabel = metricX.formatter
-            ? metricX.formatter(xvalue)
-            : xvalue;
+        const xlabel = xvalue;
 
         return {
-            'fill': xlabel.includes('+')
-                ? 'gray'
-                : '#4c8527',
+            'fill': 'black',
             'summaries': events.sort((item1, item2) => item1.f_fixture_id - item2.f_fixture_id).map((event) => event.c_summary),
             xlabel,
             yvalue,
         };
     });
+
+    if (metricX.gapFillerInner) {
+        items = metricX.gapFillerInner(items);
+    }
+
+    for (const item of items) {
+        item.xlabel = metricX.formatter
+            ? metricX.formatter(item.xlabel)
+            : item.xlabel;
+        item.fill = item.xlabel.includes('+')
+            ? 'gray'
+            : '#4c8527';
+    }
 
     return {
         items,
@@ -174,9 +224,9 @@ function getChartSpecs (metricX: Metric, metricGroup: Metric, eventTypeFilter: s
 
 function App (): JSX.Element {
     /* eslint-disable @stylistic/js/array-element-newline */
-    const [selectedMetricXKey, setSelectedMetricXKey] = useState<string>(metrics[0].key);
-    const [selectedMetricGroupKey, setSelectedMetricGroupKey] = useState<string>(metrics[1].key);
-    const [selectedEventTypeKey, setSelectedEventTypeKey] = useState<string>(eventTypes[0]);
+    const [selectedMetricXKey, setSelectedMetricXKey] = useState<string>(metricTimecode?.key || '');
+    const [selectedMetricGroupKey, setSelectedMetricGroupKey] = useState<string>(metricTeamName?.key || '');
+    const [selectedEventTypeKey, setSelectedEventTypeKey] = useState<string>(eventTypeGoal);
     /* eslint-enable @stylistic/js/array-element-newline */
 
     const selectedMetricX = metrics.find((item) => item.key === selectedMetricXKey);
@@ -193,51 +243,64 @@ function App (): JSX.Element {
 
     return (
         <div className="container">
-            <div className="header">
-                {/* Title */}
+            {/*
+            *
+            * Header
+            *
+            */}
+            <div
+                className="header"
+                style={{
+                    'fontSize': 50,
+                }}>
+
                 <div style={{ 'fontSize': 50 }}>{new Date().toUTCString()}</div>
-                <div style={{
-                    'display': 'flex',
-                    'fontSize': 50,
-                    'justifyContent': 'center',
-                }}>
-                    <div style={{ 'whiteSpace': 'pre' }}>Show </div>
 
+                <div>
+                    <div style={{
+                        'display': 'flex',
+                        'justifyContent': 'center',
+                    }}>
+                        <div style={{ 'whiteSpace': 'pre' }}>Show </div>
 
-                    <select style={{ 'fontSize': 50 }} value={selectedEventTypeKey} onChange={(event) => {
-                        setSelectedEventTypeKey(event.target.value);
-                    }} >
-                        {
-                            eventTypes.map((eventType) => <option key={eventType} value={eventType}>{getEventTypeLoc(eventType).plural || eventType}</option>)
-                        }
-                    </select>
+                        <select style={{ 'fontSize': 50 }} value={selectedEventTypeKey} onChange={(event) => {
+                            setSelectedEventTypeKey(event.target.value);
+                        }} >
+                            {
+                                eventTypes.map((eventType) => <option key={eventType} value={eventType}>{getEventTypeLoc(eventType).plural || eventType}</option>)
+                            }
+                        </select>
 
-                    <div style={{ 'whiteSpace': 'pre' }}> across </div>
-                    <select style={{ 'fontSize': 50 }} value={selectedMetricXKey} onChange={(event) => {
-                        setSelectedMetricXKey(event.target.value);
-                    }} >
-                        {
-                            metrics.map((metric) => <option key={metric.key} value={metric.key}>{metric.plural}</option>)
-                        }
-                    </select>
-                </div>
+                        <div style={{ 'whiteSpace': 'pre' }}> across </div>
 
-                <div style={{
-                    'display': 'flex',
-                    'fontSize': 50,
-                    'justifyContent': 'center',
-                    'position': 'sticky',
-                }}>
-                    <div style={{ 'whiteSpace': 'pre' }}>For each </div>
-                    <select style={{ 'fontSize': 50 }} value={selectedMetricGroupKey} onChange={(event) => {
-                        setSelectedMetricGroupKey(event.target.value);
-                    }} >
-                        {
-                            metrics.map((metric) => <option key={metric.key} value={metric.key}>{metric.singular}</option>)
-                        }
-                    </select>
+                        <select style={{ 'fontSize': 50 }} value={selectedMetricXKey} onChange={(event) => {
+                            setSelectedMetricXKey(event.target.value);
+                        }} >
+                            {
+                                metrics.map((metric) => <option key={metric.key} value={metric.key}>{metric.plural}</option>)
+                            }
+                        </select>
+                    </div>
+                    <div style={{
+                        'display': 'flex',
+                        'justifyContent': 'center',
+                    }}>
+                        <div style={{ 'whiteSpace': 'pre' }}>For each </div>
+                        <select style={{ 'fontSize': 50 }} value={selectedMetricGroupKey} onChange={(event) => {
+                            setSelectedMetricGroupKey(event.target.value);
+                        }} >
+                            {
+                                metrics.map((metric) => <option key={metric.key} value={metric.key}>{metric.singular}</option>)
+                            }
+                        </select>
+                    </div>
                 </div>
             </div>
+            {/*
+              *
+              * Content
+              *
+            */}
             <div className="content">
                 {/* Charts */}
                 <div>
