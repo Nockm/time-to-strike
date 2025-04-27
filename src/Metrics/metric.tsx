@@ -13,7 +13,7 @@ export interface Metric {
     'Singular': string;
     'evaluator': Evaluator;
     'formatter'?: Formatter;
-    'key': string;
+    'key': Db.EventKey;
     'plural': string;
     'singular': string;
     'xfiller'?: XFiller;

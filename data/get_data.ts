@@ -228,7 +228,6 @@ async function doIt ({
     const outputDir = path.join(getDirname(import.meta.url), 'output');
     ensureEmptyDir(outputDir);
 
-    /* eslint-disable @stylistic/js/array-element-newline */
     count(true, false, false, dbRoot.events, (event) => [event.e_type, event.e_detail, event.e_comments].join(', '), path.join(outputDir, 'goalTimecodes.json'));
     // dbRoot.events = dbRoot.events.filter((event) => event.type === 'Goal');
     count(true, false, false, dbRoot.events, (event) => [event.c_timecode.toString()].join(', '), path.join(outputDir, 'eventTypes.json'));

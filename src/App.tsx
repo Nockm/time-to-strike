@@ -8,11 +8,18 @@ import type { Metric } from './Metrics/metric.tsx';
 import type * as chart from './Chart/chart.tsx';
 import type * as Db from '../data/db/dbTypes.ts';
 import type * as TChart from './Chart/ChartElement.tsx';
+import * as TMetricFilter from './MetricFilter/MetricFilterElement.tsx';
+import * as MetricFilterUtil from './MetricFilter/MetricFilterUtil.tsx';
 import Chart from './Chart/ChartElement.tsx';
 import dbUntyped from '../data/output/db.json';
+import MetricFilter from './MetricFilter/MetricFilterElement.tsx';
 /* eslint-enable no-duplicate-imports */
 
 const db: Db.Root = dbUntyped as Db.Root;
+
+const filterKeys: TMetricFilter.SelectableKey[] = MetricFilterUtil.getFilterKeys();
+
+const keyToVals: Record<string, TMetricFilter.SelectableVal[]> = MetricFilterUtil.getKeyToVals(db.events);
 
 interface LocalisationEntry {
     'singular': string;
@@ -90,11 +97,22 @@ function getChartSpecs (metricX: Metric, metricGroup: Metric, eventTypeFilter: s
 }
 
 function App (): JSX.Element {
-    /* eslint-disable @stylistic/js/array-element-newline */
     const [selectedMetricXKey, setSelectedMetricXKey] = useState<string>(metricTimecode?.key || '');
     const [selectedMetricGroupKey, setSelectedMetricGroupKey] = useState<string>(metricTeamName?.key || '');
     const [selectedEventTypeKey, setSelectedEventTypeKey] = useState<string>(eventTypeGoal);
-    /* eslint-enable @stylistic/js/array-element-newline */
+    const [filters, setFilters] = useState<TMetricFilter.Selected[]>([{ 'key': TMetricFilter.idNoSelection, 'val': TMetricFilter.idNoSelection }]);
+
+    const addFilter = (): void => {
+        setFilters((prev) => prev.concat([{ 'key': TMetricFilter.idNoSelection, 'val': TMetricFilter.idNoSelection }]));
+    };
+
+    const deleteFilter = (index: number): void => {
+        setFilters((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const updateFilter = (index: number, field: 'key' | 'val', newValue: string): void => {
+        setFilters((prev) => prev.map((filter, filterIndex) => filterIndex === index ? { ...filter, [field]: newValue } : filter));
+    };
 
     const selectedMetricX = metrics.registry.find((item) => item.key === selectedMetricXKey);
     if (!selectedMetricX) {
@@ -106,7 +124,9 @@ function App (): JSX.Element {
         return <div>Invalid selected key</div>;
     }
 
-    const chartSpecs = getChartSpecs(selectedMetricX, selectedMetricGroup, selectedEventTypeKey, db.events);
+    const events: Db.Event[] = MetricFilterUtil.filterEvents(db.events, filters);
+
+    const chartSpecs = getChartSpecs(selectedMetricX, selectedMetricGroup, selectedEventTypeKey, events);
 
     return (
         <div className="container">
@@ -162,6 +182,41 @@ function App (): JSX.Element {
                         </select>
                     </div>
                 </div>
+            </div>
+            {/*
+            *
+            * Filter
+            *
+            */}
+            <button onClick={(): void => {
+                addFilter();
+            }}>New</button>
+            <div style={{
+                'display': 'flex',
+                'flexDirection': 'column',
+                'placeItems': 'center',
+            }}>
+                {
+                    filters.map((filter, index) => {
+                        const vals = keyToVals[filter.key];
+
+                        return <MetricFilter
+                            key={index}
+                            keys={filterKeys}
+                            vals={vals}
+                            selected={filters[index]}
+                            onDelete={() => {
+                                deleteFilter(index);
+                            }}
+                            onKeyChange={(newKey) => {
+                                updateFilter(index, 'key', newKey);
+                            }}
+                            onValChange={(newVal) => {
+                                updateFilter(index, 'val', newVal);
+                            }}
+                        ></MetricFilter>;
+                    })
+                }
             </div>
             {/*
               *
