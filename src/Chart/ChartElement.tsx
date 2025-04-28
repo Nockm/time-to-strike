@@ -1,5 +1,5 @@
 import type { JSX } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
+import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import type { TooltipProps } from 'recharts'; // eslint-disable-line no-duplicate-imports
 import type { Item } from './chart';
 
@@ -31,12 +31,17 @@ export default function Chart ({ spec }: { 'spec': Spec }): JSX.Element {
 
     return (
         <>
-            <BarChart width={2500} height={400} data={spec.items}>
-                <XAxis dataKey="xvalueformatted" angle={90} interval={0} textAnchor="start" height={150} />
-                <YAxis domain={domain} />
-                <Tooltip content={CustomTooltip} />
-                <Bar dataKey="yvalue" />
-            </BarChart>
+
+            <div style={{ 'width': '100%', 'height': 400 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart width={2500} height={400} data={spec.items}>
+                        <XAxis dataKey="xvalueformatted" angle={90} interval={0} textAnchor="start" height={150} />
+                        <YAxis domain={domain} />
+                        <Tooltip content={CustomTooltip} />
+                        <Bar dataKey="yvalue" />
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
         </>
     );
 }
