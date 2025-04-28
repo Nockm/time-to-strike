@@ -98,7 +98,7 @@ function App (): JSX.Element {
         return <div>Invalid selected key</div>;
     }
 
-    const selectedMetricG = metrics.registry.find((item) => item.key === selectedMetricGKey);
+    const selectedMetricG = metrics.MetricGs.find((item) => item.key === selectedMetricGKey);
 
     let events: Db.Event[] = MetricFilterUtil.filterEvents(db.events, filters);
 

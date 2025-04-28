@@ -30,7 +30,7 @@ export function keyToSelectableItems (keyId: TMetricFilter.KeyId, events: Db.Eve
 }
 
 export function getKeyToVals (events: Db.Event[]): Record<string, TMetricFilter.SelectableVal[]> {
-    const eventKeys: TMetricFilter.KeyId[] = metrics.registry.map((x) => x.key);
+    const eventKeys: TMetricFilter.KeyId[] = metrics.metricList.map((x) => x.key);
     eventKeys.push(TMetricFilter.idNoSelection);
 
     const entries: [TMetricFilter.KeyId, TMetricFilter.SelectableVal[]][] = eventKeys.map((x) => [x, keyToSelectableItems(x, events)]);
@@ -41,7 +41,7 @@ export function getKeyToVals (events: Db.Event[]): Record<string, TMetricFilter.
 }
 
 export function getFilterKeys (): TMetricFilter.SelectableKey[] {
-    const filterKeys: TMetricFilter.SelectableKey[] = metrics.registry.map((value: Metric) => ({
+    const filterKeys: TMetricFilter.SelectableKey[] = metrics.metricList.map((value: Metric) => ({
         'displayName': value.singular,
         'id': value.key,
     }));

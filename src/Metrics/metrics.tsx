@@ -4,9 +4,9 @@ import { getMetric, type Metric } from './metric.tsx';
 import * as c_timecode from './c_timecode.tsx';
 
 /* eslint-disable sort-keys */
-export const allMetrics: Record<string, Metric> = {
+export const metricDict: Record<string, Metric> = {
     'c_summary': getMetric({ 'key': 'c_summary' }),
-    'c_timecode': getMetric({ 'key': 'c_timecode', 'formatter': c_timecode.formatter, 'xfiller': c_timecode.filler, 'singular': 'minute' }),
+    'c_timecode': getMetric({ 'key': 'c_timecode', 'formatter': c_timecode.formatter, 'xfiller': c_timecode.filler, 'singular': 'game minute' }),
     'c_total_goals': getMetric({ 'key': 'c_total_goals' }),
     'e_assist_id': getMetric({ 'key': 'e_assist_id' }),
     'e_assist_name': getMetric({ 'key': 'e_assist_name' }),
@@ -37,55 +37,25 @@ export const allMetrics: Record<string, Metric> = {
 };
 /* eslint-enable sort-keys */
 
-export const registry: Metric[] = [
-    allMetrics.c_summary,
-    allMetrics.c_timecode,
-    allMetrics.c_total_goals,
-    allMetrics.e_assist_id,
-    allMetrics.e_assist_name,
-    allMetrics.e_comments,
-    allMetrics.e_detail,
-    allMetrics.e_player_id,
-    allMetrics.e_player_name,
-    allMetrics.e_team_id,
-    allMetrics.e_team_name,
-    allMetrics.e_time_elapsed,
-    allMetrics.e_time_extra,
-    allMetrics.e_type,
-    allMetrics.f_fixture_id,
-    allMetrics.f_fixture_referee,
-    allMetrics.f_fixture_venue_name,
-    allMetrics.f_goals_away,
-    allMetrics.f_goals_home,
-    allMetrics.f_league_country,
-    allMetrics.f_league_id,
-    allMetrics.f_league_round,
-    allMetrics.f_league_season,
-    allMetrics.f_lineups_0_formation,
-    allMetrics.f_lineups_1_formation,
-    allMetrics.f_score_fulltime_away,
-    allMetrics.f_score_fulltime_home,
-    allMetrics.f_teams_away_name,
-    allMetrics.f_teams_home_name,
-];
+export const metricList: Metric[] = Object.values(metricDict);
 
 export const MetricXs: Metric[] = [
-    allMetrics.c_timecode,
-    allMetrics.c_total_goals,
-    allMetrics.e_assist_name,
-    allMetrics.e_player_name,
-    allMetrics.e_team_name,
-    allMetrics.f_fixture_referee,
-    allMetrics.f_fixture_venue_name,
-    allMetrics.f_league_round,
-    allMetrics.f_league_season,
-    allMetrics.e_comments,
-    allMetrics.e_detail,
+    metricDict.c_timecode,
+    metricDict.c_total_goals,
+    metricDict.e_assist_name,
+    metricDict.e_player_name,
+    metricDict.e_team_name,
+    metricDict.f_fixture_referee,
+    metricDict.f_fixture_venue_name,
+    metricDict.f_league_round,
+    metricDict.f_league_season,
+    metricDict.e_comments,
+    metricDict.e_detail,
 ];
 
 export const MetricGs: Metric[] = [
-    allMetrics.e_team_name,
-    allMetrics.f_fixture_referee,
-    allMetrics.f_fixture_venue_name,
-    allMetrics.f_league_season,
+    metricDict.e_team_name,
+    metricDict.f_fixture_referee,
+    metricDict.f_fixture_venue_name,
+    metricDict.f_league_season,
 ];
