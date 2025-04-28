@@ -25,9 +25,6 @@ const eventFilters: EventFilter[] = getEventFilters(db.events);
 
 const keyToVals: Record<string, TMetricFilter.SelectableVal[]> = MetricFilterUtil.getKeyToVals(db.events);
 
-const metricTeamName = metrics.registry.find((item) => item.key === 'e_team_name');
-const metricTimecode = metrics.registry.find((item) => item.key === 'c_timecode');
-
 function getChartItem (xvalue: string, metricX: Metric, events: Db.Event[]): chart.Item {
     const yvalue = events.length;
     const xvalueformatted = metricX.formatter
@@ -79,8 +76,8 @@ function getChartSpecs (metricX: Metric, metricGroup: Metric, dbEvents: Db.Event
 }
 
 function App (): JSX.Element {
-    const [selectedMetricXKey, setSelectedMetricXKey] = useState<string>(metricTimecode?.key || '');
-    const [selectedMetricGroupKey, setSelectedMetricGroupKey] = useState<string>(metricTeamName?.key || '');
+    const [selectedMetricXKey, setSelectedMetricXKey] = useState<string>(metrics.MetricXs[0].key);
+    const [selectedMetricGKey, setSelectedMetricGKey] = useState<string>(metrics.MetricGs[0].key);
     const [filters, setFilters] = useState<TMetricFilter.Selected[]>([{ 'key': TMetricFilter.idNoSelection, 'val': TMetricFilter.idNoSelection }]);
     const [selectedEventFilterId, setSelectedEventFilterId] = useState<string>(eventFilters[0].id);
 
@@ -96,13 +93,13 @@ function App (): JSX.Element {
         setFilters((prev) => prev.map((filter, filterIndex) => filterIndex === index ? { ...filter, [field]: newValue } : filter));
     };
 
-    const selectedMetricX = metrics.registry.find((item) => item.key === selectedMetricXKey);
+    const selectedMetricX = metrics.MetricXs.find((item) => item.key === selectedMetricXKey);
     if (!selectedMetricX) {
         return <div>Invalid selected key</div>;
     }
 
-    const selectedMetricGroup = metrics.registry.find((item) => item.key === selectedMetricGroupKey);
-    if (!selectedMetricGroup) {
+    const selectedMetricG = metrics.registry.find((item) => item.key === selectedMetricGKey);
+    if (!selectedMetricG) {
         return <div>Invalid selected key</div>;
     }
 
@@ -114,7 +111,7 @@ function App (): JSX.Element {
         events = events.filter((event) => eventFilterAccept(event, selectedEventFilter));
     }
 
-    const chartSpecs = getChartSpecs(selectedMetricX, selectedMetricGroup, events);
+    const chartSpecs = getChartSpecs(selectedMetricX, selectedMetricG, events);
 
     return (
         <div className="container">
@@ -152,7 +149,7 @@ function App (): JSX.Element {
                             setSelectedMetricXKey(event.target.value);
                         }} >
                             {
-                                metrics.registry.map((metric) => <option key={metric.key} value={metric.key}>{metric.plural}</option>)
+                                metrics.MetricXs.map((metric) => <option key={metric.key} value={metric.key}>{metric.plural}</option>)
                             }
                         </select>
                     </div>
@@ -161,11 +158,11 @@ function App (): JSX.Element {
                         'justifyContent': 'center',
                     }}>
                         <div style={{ 'whiteSpace': 'pre' }}>For each </div>
-                        <select style={{ 'fontSize': 50 }} value={selectedMetricGroupKey} onChange={(event) => {
-                            setSelectedMetricGroupKey(event.target.value);
+                        <select style={{ 'fontSize': 50 }} value={selectedMetricGKey} onChange={(event) => {
+                            setSelectedMetricGKey(event.target.value);
                         }} >
                             {
-                                metrics.registry.map((metric) => <option key={metric.key} value={metric.key}>{metric.singular}</option>)
+                                metrics.MetricGs.map((metric) => <option key={metric.key} value={metric.key}>{metric.singular}</option>)
                             }
                         </select>
                     </div>
