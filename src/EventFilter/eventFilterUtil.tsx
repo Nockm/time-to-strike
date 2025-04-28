@@ -11,45 +11,56 @@ export interface EventFilter {
     'displayName': string;
 }
 
-function eventToEventFilter (event: Db.Event): EventFilter {
-    let displayName = stringUtil.toUppercaseFirstLetter(event.e_type);
+function getDisplayName (spec: string[]): string {
+    let displayName = stringUtil.toUppercaseFirstLetter(spec[0]);
 
-    if (event.e_detail) {
-        displayName += `, ${event.e_detail}`;
+    if (spec[1]) {
+        displayName += `, ${spec[1]}`;
     }
 
-    if (event.e_comments) {
-        displayName += ` (${event.e_comments})`;
+    if (spec[2]) {
+        displayName += ` (${spec[2]})`;
     }
 
+    return displayName;
+}
+
+export function sortLambda<T> (array: T[], func: (item: T) => string): T[] {
+    return array.sort((a: T, b: T) => func(a).localeCompare(func(b)));
+}
+
+function getCustomEventFilter (spec: string[], displayName?: string | null): EventFilter {
     return {
-        displayName,
-        'e_comments': event.e_comments,
-        'e_detail': event.e_detail,
-        'e_type': event.e_type,
-        'id': [event.e_type, event.e_detail, event.e_comments].join('--'),
+        'displayName': displayName || getDisplayName(spec),
+        'e_comments': spec.length >= 2 ? spec[2] : null,
+        'e_detail': spec.length >= 1 ? spec[1] : null,
+        'e_type': spec.length >= 0 ? spec[0] : null,
+        'id': getDisplayName(spec),
     };
 }
 
-export function getEventFilters (events: Db.Event[]): EventFilter[] {
-    const eventFilters: [string, EventFilter][] = events.map((event: Db.Event) => {
-        const eventFilter: EventFilter = eventToEventFilter(event);
-        return [eventFilter.id, eventFilter];
-    });
+export function getEventFiltersCustom (): EventFilter[] {
+    return [
+        getCustomEventFilter(['Goal'], 'Goal'),
+        getCustomEventFilter(['Goal', 'Own Goal'], 'Own Goal'),
+        getCustomEventFilter(['Goal', 'Penalty'], 'Penalty'),
+        getCustomEventFilter(['Card', 'Red Card'], 'Red Card'),
+        getCustomEventFilter(['Card', 'Yellow Card'], 'Yellow Card'),
+        getCustomEventFilter(['subst'], 'Substitution'),
+        getCustomEventFilter(['Var'], 'VAR'),
+    ];
+}
 
-    const eventFiltersObj: Record<string, EventFilter> = Object.fromEntries<EventFilter>(eventFilters);
-
-    const uniqueEventFilters: EventFilter[] = Object.values(eventFiltersObj);
-
-    uniqueEventFilters.unshift({
-        'displayName': UNSELECTED,
-        'e_comments': null,
-        'e_detail': null,
-        'e_type': null,
-        'id': UNSELECTED,
-    });
-
-    return uniqueEventFilters;
+export function getEventFilters (): EventFilter[] {
+    return [
+        getCustomEventFilter(['Goal'], 'Goal'),
+        getCustomEventFilter(['Goal', 'Own Goal'], 'Own Goal'),
+        getCustomEventFilter(['Goal', 'Penalty'], 'Penalty'),
+        getCustomEventFilter(['Card', 'Red Card'], 'Red Card'),
+        getCustomEventFilter(['Card', 'Yellow Card'], 'Yellow Card'),
+        getCustomEventFilter(['subst'], 'Substitution'),
+        getCustomEventFilter(['Var'], 'VAR'),
+    ];
 }
 
 export function eventFilterAccept (event: Db.Event, eventFilter: EventFilter): boolean {

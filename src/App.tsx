@@ -21,7 +21,7 @@ const db: Db.Root = dbUntyped as Db.Root;
 
 const filterKeys: TMetricFilter.SelectableKey[] = MetricFilterUtil.getFilterKeys();
 
-const eventFilters: EventFilter[] = getEventFilters(db.events);
+const eventFilters: EventFilter[] = getEventFilters();
 
 const keyToVals: Record<string, TMetricFilter.SelectableVal[]> = MetricFilterUtil.getKeyToVals(db.events);
 
