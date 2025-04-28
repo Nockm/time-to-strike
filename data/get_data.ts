@@ -240,7 +240,6 @@ async function doIt ({
     ].join(' '));
 
     writeFileSync(path.join(outputDir, 'db.json'), JSON.stringify(dbRoot, null, 2));
-    /* eslint-enable @stylistic/js/array-element-newline */
 
     console.log(`${credits} credits left.`);
 }
