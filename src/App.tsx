@@ -11,13 +11,15 @@ import type * as TChart from './Chart/ChartElement.tsx';
 import * as TMetricFilter from './MetricFilter/MetricFilterElement.tsx';
 import * as MetricFilterUtil from './MetricFilter/MetricFilterUtil.tsx';
 import Chart from './Chart/ChartElement.tsx';
-import dbUntyped from '../data/output/db.json';
+import dbJsonCompressed from '../data/output/db.dat?raw';
+import * as b64ZipUtil from '../data/util/stringCompressionUtil.ts';
 import MetricFilter from './MetricFilter/MetricFilterElement.tsx';
 import { eventFilterAccept, getEventFilters } from './EventFilter/eventFilterUtil.tsx';
 import type { EventFilter } from './EventFilter/eventFilterUtil.tsx';
 /* eslint-enable no-duplicate-imports */
 
-const db: Db.Root = dbUntyped as Db.Root;
+const dbJson: string = b64ZipUtil.decompressString(dbJsonCompressed);
+const db: Db.Root = JSON.parse(dbJson);
 
 const filterKeys: TMetricFilter.SelectableKey[] = MetricFilterUtil.getFilterKeys();
 

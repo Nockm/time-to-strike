@@ -32,7 +32,7 @@ export default function Chart ({ spec }: { 'spec': Spec }): JSX.Element {
     return (
         <>
 
-            <div style={{ 'width': '100%', 'height': 400 }}>
+            <div style={{ 'height': 400, 'width': '100%' }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart width={2500} height={400} data={spec.items}>
                         <XAxis dataKey="xvalueformatted" angle={90} interval={0} textAnchor="start" height={150} />
