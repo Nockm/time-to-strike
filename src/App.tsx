@@ -77,7 +77,7 @@ function getChartSpecs (metricX: Metric, metricGroup: Metric, dbEvents: Db.Event
 
 function App (): JSX.Element {
     const [selectedMetricXKey, setSelectedMetricXKey] = useState<string>(metrics.MetricXs[0].key);
-    const [selectedMetricGKey, setSelectedMetricGKey] = useState<string>(metrics.MetricGs[0].key);
+    const [selectedMetricGKey, setSelectedMetricGKey] = useState<string>();
     const [filters, setFilters] = useState<TMetricFilter.Selected[]>([{ 'key': TMetricFilter.idNoSelection, 'val': TMetricFilter.idNoSelection }]);
     const [selectedEventFilterId, setSelectedEventFilterId] = useState<string>(eventFilters[0].id);
 
@@ -99,9 +99,6 @@ function App (): JSX.Element {
     }
 
     const selectedMetricG = metrics.registry.find((item) => item.key === selectedMetricGKey);
-    if (!selectedMetricG) {
-        return <div>Invalid selected key</div>;
-    }
 
     let events: Db.Event[] = MetricFilterUtil.filterEvents(db.events, filters);
 
@@ -111,7 +108,9 @@ function App (): JSX.Element {
         events = events.filter((event) => eventFilterAccept(event, selectedEventFilter));
     }
 
-    const chartSpecs = getChartSpecs(selectedMetricX, selectedMetricG, events);
+    const chartSpecs = selectedMetricG
+        ? getChartSpecs(selectedMetricX, selectedMetricG, events)
+        : [getChartSpec(selectedMetricX, events, '')];
 
     return (
         <div className="container">
@@ -161,6 +160,7 @@ function App (): JSX.Element {
                         <select style={{ 'fontSize': 50 }} value={selectedMetricGKey} onChange={(event) => {
                             setSelectedMetricGKey(event.target.value);
                         }} >
+                            <option>-- Select --</option>
                             {
                                 metrics.MetricGs.map((metric) => <option key={metric.key} value={metric.key}>{metric.singular}</option>)
                             }
