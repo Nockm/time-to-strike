@@ -7,6 +7,7 @@ import { getStatus } from './api/getStatus.ts';
 import { writeFileSync } from 'fs';
 import { ensureEmptyDir, getDirname } from './util/pathUtil.ts';
 import path from 'path';
+import { compressString } from './util/stringCompressionUtil.ts';
 
 const delay = (ms: number): unknown => new Promise((res) => setTimeout(res, ms)); // eslint-disable-line no-promise-executor-return
 
@@ -239,7 +240,11 @@ async function doIt ({
         event.e_player_id,
     ].join(' '));
 
-    writeFileSync(path.join(outputDir, 'db.json'), JSON.stringify(dbRoot, null, 2));
+    const jsonPath = path.join(outputDir, 'db.json');
+    const jsonZipB64Path = path.join(outputDir, 'db.dat');
+    const jsonContent = JSON.stringify(dbRoot, null, 2);
+    writeFileSync(jsonPath, jsonContent);
+    writeFileSync(jsonZipB64Path, compressString(jsonContent));
 
     console.log(`${credits} credits left.`);
 }
