@@ -112,6 +112,9 @@ function App (): JSX.Element {
         ? getChartSpecs(selectedMetricX, selectedMetricG, events)
         : [getChartSpec(selectedMetricX, events, '')];
 
+    const maxY = Math.max(...chartSpecs.map((x) => Math.max(...x.items.map((y) => y.yvalue))));
+    chartSpecs.forEach((x) => { x.maxY = maxY; });
+
     return (
         <div className="container">
             {/*

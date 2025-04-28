@@ -6,6 +6,7 @@ import type { Item } from './chart';
 export interface Spec {
     'title': string;
     'items': Item[];
+    'maxY'?: number;
 }
 
 const CustomTooltip = ({ active, payload }: TooltipProps<number, string>): JSX.Element | null => {
@@ -25,11 +26,14 @@ const CustomTooltip = ({ active, payload }: TooltipProps<number, string>): JSX.E
 };
 
 export default function Chart ({ spec }: { 'spec': Spec }): JSX.Element {
+    // eslint-disable-next-line no-undefined
+    const domain = spec.maxY ? [0, spec.maxY] : undefined;
+
     return (
         <>
             <BarChart width={2500} height={400} data={spec.items}>
                 <XAxis dataKey="xvalueformatted" angle={90} interval={0} textAnchor="start" height={150} />
-                <YAxis />
+                <YAxis domain={domain} />
                 <Tooltip content={CustomTooltip} />
                 <Bar dataKey="yvalue" />
             </BarChart>
