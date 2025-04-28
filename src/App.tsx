@@ -13,40 +13,22 @@ import * as MetricFilterUtil from './MetricFilter/MetricFilterUtil.tsx';
 import Chart from './Chart/ChartElement.tsx';
 import dbUntyped from '../data/output/db.json';
 import MetricFilter from './MetricFilter/MetricFilterElement.tsx';
+import { eventFilterAccept, getEventFilters } from './EventFilter/eventFilterUtil.tsx';
+import type { EventFilter } from './EventFilter/eventFilterUtil.tsx';
 /* eslint-enable no-duplicate-imports */
 
 const db: Db.Root = dbUntyped as Db.Root;
 
 const filterKeys: TMetricFilter.SelectableKey[] = MetricFilterUtil.getFilterKeys();
 
+const eventFilters: EventFilter[] = getEventFilters(db.events);
+
 const keyToVals: Record<string, TMetricFilter.SelectableVal[]> = MetricFilterUtil.getKeyToVals(db.events);
-
-interface LocalisationEntry {
-    'singular': string;
-    'plural': string;
-}
-
-/* eslint-disable sort-keys */
-const eventTypeLoc: Record<string, LocalisationEntry> = {
-    'Card': { 'singular': 'card', 'plural': 'cards' },
-    'Goal': { 'singular': 'goal', 'plural': 'goals' },
-    'Var': { 'singular': 'VAR call', 'plural': 'VAR calls' },
-    'subst': { 'singular': 'sub', 'plural': 'subs' },
-};
-/* eslint-enable sort-keys */
-
-function getEventTypeLoc (key: string): LocalisationEntry {
-    return eventTypeLoc[key] || { 'plural': key, 'singular': key };
-}
 
 const metricTeamName = metrics.registry.find((item) => item.key === 'e_team_name');
 const metricTimecode = metrics.registry.find((item) => item.key === 'c_timecode');
-const eventTypeGoal = 'Goal';
 
-const allEventTypes: string[] = db.events.map((event) => event.e_type);
-const eventTypes: string[] = counters.getUniqueValues<string>(allEventTypes);
-
-function getChartItem (xvalue: string, metricX: Metric, eventTypeFilter: string, events: Db.Event[]): chart.Item {
+function getChartItem (xvalue: string, metricX: Metric, events: Db.Event[]): chart.Item {
     const yvalue = events.length;
     const xvalueformatted = metricX.formatter
         ? metricX.formatter(xvalue)
@@ -58,7 +40,7 @@ function getChartItem (xvalue: string, metricX: Metric, eventTypeFilter: string,
 
     return {
         fill,
-        'tooltipHeader': `${yvalue} ${eventTypeFilter} at ${metricX.singular} ${xvalueformatted}`,
+        'tooltipHeader': `${yvalue} at ${metricX.singular} ${xvalueformatted}`,
         'tooltipLines': events.sort((item1, item2) => item1.f_fixture_id - item2.f_fixture_id).map((event) => event.c_summary),
         xvalue,
         xvalueformatted,
@@ -66,13 +48,13 @@ function getChartItem (xvalue: string, metricX: Metric, eventTypeFilter: string,
     };
 }
 
-function getChartSpec (metricX: Metric, eventTypeFilter: string, dbEvents: Db.Event[], groupName: string): TChart.Spec {
+function getChartSpec (metricX: Metric, dbEvents: Db.Event[], groupName: string): TChart.Spec {
     const xvalueEventsPairs = counters.groupByToTuples<Db.Event, string>(dbEvents, metricX.evaluator);
 
     let chartItems: chart.Item[] = xvalueEventsPairs.map(([
         xvalue,
         events,
-    ]) => getChartItem(xvalue, metricX, eventTypeFilter, events));
+    ]) => getChartItem(xvalue, metricX, events));
 
     if (metricX.xfiller) {
         chartItems = metricX.xfiller(chartItems);
@@ -80,18 +62,18 @@ function getChartSpec (metricX: Metric, eventTypeFilter: string, dbEvents: Db.Ev
 
     return {
         'items': chartItems,
-        'title': `[${groupName}] ${getEventTypeLoc(eventTypeFilter).plural} for each ${metricX.singular}`,
+        'title': `[${groupName}] for each ${metricX.singular}`,
     };
 }
 
-function getChartSpecs (metricX: Metric, metricGroup: Metric, eventTypeFilter: string, dbEvents: Db.Event[]): TChart.Spec[] {
-    const filteredEvents = dbEvents.filter((event) => event.e_type === eventTypeFilter);
+function getChartSpecs (metricX: Metric, metricGroup: Metric, dbEvents: Db.Event[]): TChart.Spec[] {
+    const filteredEvents = dbEvents;
     const nameEventsPairs = counters.groupByToTuples<Db.Event, string>(filteredEvents, metricGroup.evaluator);
 
     const chartSpecs = nameEventsPairs.map(([
         name,
         events,
-    ]) => getChartSpec(metricX, eventTypeFilter, events, name));
+    ]) => getChartSpec(metricX, events, name));
 
     return chartSpecs;
 }
@@ -99,8 +81,8 @@ function getChartSpecs (metricX: Metric, metricGroup: Metric, eventTypeFilter: s
 function App (): JSX.Element {
     const [selectedMetricXKey, setSelectedMetricXKey] = useState<string>(metricTimecode?.key || '');
     const [selectedMetricGroupKey, setSelectedMetricGroupKey] = useState<string>(metricTeamName?.key || '');
-    const [selectedEventTypeKey, setSelectedEventTypeKey] = useState<string>(eventTypeGoal);
     const [filters, setFilters] = useState<TMetricFilter.Selected[]>([{ 'key': TMetricFilter.idNoSelection, 'val': TMetricFilter.idNoSelection }]);
+    const [selectedEventFilterId, setSelectedEventFilterId] = useState<string>(eventFilters[0].id);
 
     const addFilter = (): void => {
         setFilters((prev) => prev.concat([{ 'key': TMetricFilter.idNoSelection, 'val': TMetricFilter.idNoSelection }]));
@@ -124,9 +106,15 @@ function App (): JSX.Element {
         return <div>Invalid selected key</div>;
     }
 
-    const events: Db.Event[] = MetricFilterUtil.filterEvents(db.events, filters);
+    let events: Db.Event[] = MetricFilterUtil.filterEvents(db.events, filters);
 
-    const chartSpecs = getChartSpecs(selectedMetricX, selectedMetricGroup, selectedEventTypeKey, events);
+    const selectedEventFilter = eventFilters.find((x) => x.id === selectedEventFilterId);
+
+    if (selectedEventFilter) {
+        events = events.filter((event) => eventFilterAccept(event, selectedEventFilter));
+    }
+
+    const chartSpecs = getChartSpecs(selectedMetricX, selectedMetricGroup, events);
 
     return (
         <div className="container">
@@ -150,11 +138,11 @@ function App (): JSX.Element {
                     }}>
                         <div style={{ 'whiteSpace': 'pre' }}>Show </div>
 
-                        <select style={{ 'fontSize': 50 }} value={selectedEventTypeKey} onChange={(event) => {
-                            setSelectedEventTypeKey(event.target.value);
+                        <select style={{ 'fontSize': 50 }} value={selectedEventFilterId} onChange={(event) => {
+                            setSelectedEventFilterId(event.target.value);
                         }} >
                             {
-                                eventTypes.map((eventType) => <option key={eventType} value={eventType}>{getEventTypeLoc(eventType).plural || eventType}</option>)
+                                eventFilters.map((eventFilter) => <option key={eventFilter.id} value={eventFilter.id}>{eventFilter.displayName}</option>)
                             }
                         </select>
 
