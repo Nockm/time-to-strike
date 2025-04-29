@@ -66,6 +66,21 @@ function apiEventToDbEvent (apiFixtureInfo: Api.FixtureInfo, apiEvent: Api.Event
 
     timecode += apiEvent.time.extra || 0;
 
+    const players = [
+        apiFixtureInfo.players[0].players,
+        apiFixtureInfo.players[1].players,
+    ].flat();
+    const foundPlayer: any = players.find((x) => x.player.id === apiEvent.player.id);
+    if (!foundPlayer) {
+        console.log(`[WARNING] Player ${apiEvent.player.id} not found`);
+    }
+
+    const teams = Object.values(apiFixtureInfo.teams);
+    const foundTeam: any = teams.find((x) => x.id === apiEvent.team.id);
+    if (!foundTeam) {
+        console.log(`[WARNING] Team ${apiEvent.team.id} not found`);
+    }
+
     const dbEvent: Db.Event = {
         /* eslint-disable @typescript-eslint/naming-convention */
         'c_summary': `${apiFixtureInfo.teams.home.name} ${apiFixtureInfo.goals.home}-${apiFixtureInfo.goals.away} ${apiFixtureInfo.teams.away.name} on ${apiFixtureInfo.fixture.date.slice(0, 10)}`,
@@ -77,8 +92,10 @@ function apiEventToDbEvent (apiFixtureInfo: Api.FixtureInfo, apiEvent: Api.Event
         'e_detail': apiEvent.detail,
         'e_player_id': apiEvent.player.id,
         'e_player_name': apiEvent.player.name,
+        'e_player_name_image': foundPlayer.player.photo,
         'e_team_id': apiEvent.team.id,
         'e_team_name': apiEvent.team.name,
+        'e_team_name_image': foundTeam.logo,
         'e_time_elapsed': apiEvent.time.elapsed,
         'e_time_extra': apiEvent.time.extra,
         'e_type': apiEvent.type,

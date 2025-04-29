@@ -7,6 +7,7 @@ export interface Spec {
     'title': string;
     'items': Item[];
     'maxY'?: number;
+    'groupImageUrl'?: string;
 }
 
 const CustomTooltip = ({ active, payload }: TooltipProps<number, string>): JSX.Element | null => {

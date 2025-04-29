@@ -9,8 +9,10 @@ export interface Event {
     'e_detail': string;
     'e_player_id': number;
     'e_player_name': string;
+    'e_player_name_image': string;
     'e_team_id': number;
     'e_team_name': string;
+    'e_team_name_image': string;
     'e_time_elapsed': number;
     'e_time_extra': null | number;
     'e_type': string;

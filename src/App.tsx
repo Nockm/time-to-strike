@@ -47,7 +47,7 @@ function getChartItem (xvalue: string, metricX: Metric, events: Db.Event[]): cha
     };
 }
 
-function getChartSpec (metricX: Metric, dbEvents: Db.Event[], groupName: string): TChart.Spec {
+function getChartSpec (metricX: Metric, metricGroup: Metric | null, dbEvents: Db.Event[], groupName: string): TChart.Spec {
     const xvalueEventsPairs = counters.groupByToTuples<Db.Event, string>(dbEvents, metricX.evaluator);
 
     let chartItems: chart.Item[] = xvalueEventsPairs.map(([
@@ -59,7 +59,12 @@ function getChartSpec (metricX: Metric, dbEvents: Db.Event[], groupName: string)
         chartItems = metricX.xfiller(chartItems);
     }
 
+    const groupImageUrl = metricGroup?.keyImageUrl
+        ? dbEvents[0][metricGroup.keyImageUrl]?.toString()
+        : '';
+
     return {
+        groupImageUrl,
         'items': chartItems,
         'title': `[${groupName}] for each ${metricX.singular}`,
     };
@@ -72,7 +77,7 @@ function getChartSpecs (metricX: Metric, metricGroup: Metric, dbEvents: Db.Event
     const chartSpecs = nameEventsPairs.map(([
         name,
         events,
-    ]) => getChartSpec(metricX, events, name));
+    ]) => getChartSpec(metricX, metricGroup, events, name));
 
     return chartSpecs;
 }
@@ -112,7 +117,7 @@ function App (): JSX.Element {
 
     const chartSpecs = selectedMetricG
         ? getChartSpecs(selectedMetricX, selectedMetricG, events)
-        : [getChartSpec(selectedMetricX, events, '')];
+        : [getChartSpec(selectedMetricX, null, events, '')];
 
     const maxY = Math.max(...chartSpecs.map((x) => Math.max(...x.items.map((y) => y.yvalue))));
     chartSpecs.forEach((x) => { x.maxY = maxY; });
@@ -218,6 +223,7 @@ function App (): JSX.Element {
                 <div>
                     {
                         chartSpecs.map((chartSpec) => <div key={chartSpec.title}>
+                            <img src={chartSpec.groupImageUrl}></img>
                             <div style={{ 'fontSize': 30 }}>{chartSpec.title}</div>
                             <Chart spec={chartSpec}></Chart>
                         </div>)

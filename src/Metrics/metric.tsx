@@ -13,6 +13,7 @@ export interface Metric {
     'Singular': string;
     'evaluator': Evaluator;
     'formatter'?: Formatter;
+    'keyImageUrl'?: Db.EventKey;
     'key': Db.EventKey;
     'plural': string;
     'singular': string;
@@ -34,6 +35,7 @@ export function getMetric (opts: {
     'evaluator'?: Evaluator;
     'formatter'?: Formatter;
     'key': Db.EventKey;
+    'keyImageUrl'?: Db.EventKey;
     'plural'?: string;
     'singular'?: string;
     'xfiller'?: XFiller;
@@ -53,6 +55,7 @@ export function getMetric (opts: {
         'evaluator': opts.evaluator || defaultEvaluator,
         'formatter': opts.formatter || defaultFormatter,
         'key': opts.key,
+        'keyImageUrl': opts.keyImageUrl,
         plural,
         singular,
         'xfiller': opts.xfiller,

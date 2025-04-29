@@ -13,9 +13,9 @@ export const metricDict: Record<string, Metric> = {
     'e_comments': getMetric({ 'key': 'e_comments' }),
     'e_detail': getMetric({ 'key': 'e_detail' }),
     'e_player_id': getMetric({ 'key': 'e_player_id' }),
-    'e_player_name': getMetric({ 'key': 'e_player_name' }),
+    'e_player_name': getMetric({ 'key': 'e_player_name', 'keyImageUrl': 'e_player_name_image' }),
     'e_team_id': getMetric({ 'key': 'e_team_id' }),
-    'e_team_name': getMetric({ 'key': 'e_team_name' }),
+    'e_team_name': getMetric({ 'key': 'e_team_name', 'keyImageUrl': 'e_team_name_image' }),
     'e_time_elapsed': getMetric({ 'key': 'e_time_elapsed' }),
     'e_time_extra': getMetric({ 'key': 'e_time_extra' }),
     'e_type': getMetric({ 'key': 'e_type' }),
@@ -55,6 +55,7 @@ export const MetricXs: Metric[] = [
 
 export const MetricGs: Metric[] = [
     metricDict.e_team_name,
+    metricDict.e_player_name,
     metricDict.f_fixture_referee,
     metricDict.f_fixture_venue_name,
     metricDict.f_league_season,
