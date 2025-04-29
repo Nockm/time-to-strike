@@ -55,6 +55,8 @@ function getChartSpec (metricX: Metric, metricGroup: Metric | null, dbEvents: Db
         events,
     ]) => getChartItem(xvalue, metricX, events));
 
+    chartItems = counters.sortArrayByString(chartItems, (x) => x.xvalue);
+
     if (metricX.xfiller) {
         chartItems = metricX.xfiller(chartItems);
     }
@@ -115,12 +117,14 @@ function App (): JSX.Element {
         events = events.filter((event) => eventFilterAccept(event, selectedEventFilter));
     }
 
-    const chartSpecs = selectedMetricG
+    let chartSpecs = selectedMetricG
         ? getChartSpecs(selectedMetricX, selectedMetricG, events)
         : [getChartSpec(selectedMetricX, null, events, '')];
 
     const maxY = Math.max(...chartSpecs.map((x) => Math.max(...x.items.map((y) => y.yvalue))));
     chartSpecs.forEach((x) => { x.maxY = maxY; });
+
+    chartSpecs = counters.sortArrayByString(chartSpecs, (x) => x.title);
 
     return (
         <div className="container">
