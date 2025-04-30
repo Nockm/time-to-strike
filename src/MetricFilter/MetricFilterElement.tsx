@@ -34,27 +34,21 @@ export interface MetricFilterProps {
 export default function MetricFilter ({ selected, keys, vals, onKeyChange, onValChange, onDelete }: MetricFilterProps): JSX.Element {
     return (
         <>
-            <div style={{
-                'display': 'flex',
-                'flexDirection': 'row',
-                'placeItems': 'center',
+            <button className="filter-delete-button" onClick={onDelete}>x</button>
+            <select className="filter-select-key" value={selected.key || ''} onChange={(event) => {
+                onKeyChange(event.target.value);
             }}>
-                <button onClick={onDelete}>x</button>
-                <select value={selected.key || ''} onChange={(event) => {
-                    onKeyChange(event.target.value);
-                }}>
-                    {
-                        keys.map((key) => <option key={key.id} value={key.id || ''}>{key.displayName}</option>)
-                    }
-                </select>
-                <select disabled={!selected.key} value={selected.val || ''} onChange={(event) => {
-                    onValChange(event.target.value);
-                }}>
-                    {
-                        vals.map((val) => <option key={val.id} value={val.id || ''}>{val.displayName}</option>)
-                    }
-                </select>
-            </div>
+                {
+                    keys.map((key) => <option className="filter-option-key" key={key.id} value={key.id || ''}>{key.displayName}</option>)
+                }
+            </select>
+            <select className="filter-select-val" disabled={!selected.key} value={selected.val || ''} onChange={(event) => {
+                onValChange(event.target.value);
+            }}>
+                {
+                    vals.map((val) => <option className="filter-option-key" key={val.id} value={val.id || ''}>{val.displayName}</option>)
+                }
+            </select>
         </>
     );
 }

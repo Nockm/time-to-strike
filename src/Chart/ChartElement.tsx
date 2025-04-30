@@ -3,10 +3,18 @@ import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recha
 import type { TooltipProps } from 'recharts'; // eslint-disable-line no-duplicate-imports
 import type { Item } from './chart';
 
+const root = document.documentElement;
+const cardTickColor = getComputedStyle(root).getPropertyValue('--card-tick-color')
+    .trim();
+
 export interface Spec {
     'title': string;
     'items': Item[];
     'maxY'?: number;
+    'labelx': string;
+    'labely': string;
+    'labelg': string;
+    'groupName'?: string;
     'groupImageUrl'?: string;
 }
 
@@ -32,17 +40,14 @@ export default function Chart ({ spec }: { 'spec': Spec }): JSX.Element {
 
     return (
         <>
-
-            <div style={{ 'height': 400, 'width': '100%' }}>
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart width={2500} height={400} data={spec.items}>
-                        <XAxis dataKey="xvalueformatted" angle={90} interval={0} textAnchor="start" height={150} />
-                        <YAxis domain={domain} />
-                        <Tooltip content={CustomTooltip} />
-                        <Bar dataKey="yvalue" />
-                    </BarChart>
-                </ResponsiveContainer>
-            </div>
+            <ResponsiveContainer>
+                <BarChart data={spec.items}>
+                    <XAxis dataKey="xvalueformatted" stroke={cardTickColor} tick angle={90} interval={0} textAnchor="start" height={150} />
+                    <YAxis domain={domain} />
+                    <Tooltip content={CustomTooltip} />
+                    <Bar dataKey="yvalue" />
+                </BarChart>
+            </ResponsiveContainer>
         </>
     );
 }

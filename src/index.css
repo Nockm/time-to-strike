@@ -1,23 +1,81 @@
 :root {
-  background-color: #111;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: leaguespartan, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
+
+  /* Parameters */
+
+  --font-family: leaguespartan, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-size-h1: 35px;
+  --font-size-h2: 25px;
+  --font-size-h3: 13px;
+
+  --theme-back1: #02040f;
+  --theme-back2: #001f54;
+  --theme-text1: #e0fbfcCC;
+  --theme-text2: #e0fbfc;
+  --theme-text3: #ee6c4d;
+
+  --general-padding: 8px;
+  --general-margin: 8px;
+
+  --debug-outline: 4px red dotted;
+  --debug-outline: 0px red dotted;
+
+  /* Assignments */
+
+  --card-back: var(--theme-back2);
+  --card-bar1: var(--theme-text1);
+  --card-bar2: var(--theme-text3);
+  --card-photo-image-size: 75px;
+  --card-text: var(--theme-text1);
+  --card-tick-font-size: var(--font-size-h3);
+  --card-tick-color: var(--theme-text1);
+  --card-title-primary-font-size: var(--font-size-h1);
+  --card-title-secondary-font-size: var(--font-size-h2);
+
+  background-color: var(--theme-back1);
+  color: var(--theme-text1);
+  font-size: var(--font-size-h1);
+}
+
+div {
+  outline: var(--debug-outline);
+}
+
+select {
+  font-size: var(--font-size-h1);
+  font-family: var(--font-family);
+  background-color: transparent;
+  border: 0px;
+  /* padding-top: 20px; */
+  margin-top: -1px;
+}
+
+option {
+  color: black;
+  background-color: red;
+  border-width: 0px;
+}
+
+button {
+  font-size: var(--font-size-h1);
+  font-family: var(--font-family);
+}
+
+@font-face {
+  font-family: 'leaguespartan';
+  src: url('/src/assets/League_Spartan/LeagueSpartan-VariableFont_wght.ttf') format('truetype');
 }
 
 body {
   margin: 0;
   display: flex;
   place-items: center;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
 }
 
 .container {
@@ -31,11 +89,6 @@ h1 {
   flex: 0 0 auto;
 }
 
-.content {
-  flex: 1 1 auto;
-  overflow-y: auto;
-}
-
 .tooltip {
   background-color: white;
   border: 1px solid black;
@@ -46,4 +99,159 @@ h1 {
 .tooltip-header {
   font-weight: bold;
   margin-bottom: 10px;
+}
+
+/* Misc */
+
+.debug-text {
+  font-size: var(--font-size-h3);
+}
+
+/* Header */
+
+.menu-row {
+  display: flex;
+  justify-content: center;
+  white-space: pre;
+}
+
+/*
+ *
+ *
+ * Preferences
+ *
+ */
+
+ .toolbar {
+  display: flex;
+  flex-direction: row;
+ }
+
+.request {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto auto;
+  margin: var(--general-margin);
+  padding: var(--general-padding);
+}
+
+.request-key {
+  text-align: right;
+  padding-right: var(--general-padding);
+  white-space: nowrap;
+}
+
+.request-val {
+  text-align: left;
+  white-space: nowrap;
+}
+
+.filter {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  /* grid-template-rows: auto auto auto; */
+  margin: var(--general-margin);
+  padding: var(--general-padding);
+  white-space: nowrap;
+}
+
+.filter-button {
+  font-size: var(--font-size-h2);
+}
+
+.filter-delete-button {
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: var(--font-size-h2);
+  background-color: transparent;
+  border: 0px;
+  color: var(--theme-text3)
+}
+
+.filter-select-key {
+  font-size: var(--font-size-h2);
+}
+
+.filter-select-val {
+  font-size: var(--font-size-h2);
+}
+
+.filter-option-key {
+  font-size: var(--font-size-h2);
+}
+
+.filter-option-val {
+  font-size: var(--font-size-h2);
+}
+
+/*
+ *
+ *
+ * Cards
+ *
+ */
+
+/* Level 0 */
+
+.cards {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  margin: var(--general-margin);
+  padding: var(--general-padding);
+}
+
+/* Level 1 */
+
+.card {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  background-color: var(--card-back);
+  margin: var(--general-margin);
+  padding: var(--general-padding);
+}
+
+/* Level 2 */
+
+.card-title {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: center;
+  margin: var(--general-margin);
+  padding: var(--general-padding);
+}
+
+.card-title-primary {
+  white-space: pre;
+  font-size: var(--card-title-primary-font-size);
+}
+
+.card-title-secondary {
+  font-weight: bold;
+  font-size: var(--card-title-secondary-font-size);
+}
+
+.card-photo {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: end;
+  margin: var(--general-margin);
+  padding: var(--general-padding);
+}
+
+.card-chart {
+  grid-column: 1;
+  grid-row: 2;
+  height: 500px;
+  font-size: var(--card-tick-font-size);
+  margin: var(--general-margin);
+  padding: var(--general-padding);
+}
+
+/* Level 3 */
+
+.card-photo-image {
+  width: var(--card-photo-image-size);
+  height: var(--card-photo-image-size);
 }
