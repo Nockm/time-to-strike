@@ -50,14 +50,10 @@ export function getMetric (opts: {
     return {
         ...word,
         ...{
-            // 'Plural': stringUtil.toUppercaseFirstLetter(plural),
-            // 'Singular': stringUtil.toUppercaseFirstLetter(singular),
             'evaluator': opts.evaluator || defaultEvaluator,
             'formatter': opts.formatter || defaultFormatter,
             'key': opts.key,
             'keyImageUrl': opts.keyImageUrl,
-            // plural,
-            // singular,
             'xfiller': opts.xfiller,
         },
     };

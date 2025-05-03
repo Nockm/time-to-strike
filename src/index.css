@@ -38,6 +38,9 @@
   --card-title-primary-font-size: var(--font-size-h1);
   --card-title-secondary-font-size: var(--font-size-h2);
 
+  --choice-color-back: var(--theme-text3);
+  --choice-color-fore: var(--theme-back1);
+
   background-color: var(--theme-back1);
   color: var(--theme-text1);
   font-size: var(--font-size-h1);
@@ -50,16 +53,30 @@ div {
 select {
   font-size: var(--font-size-h1);
   font-family: var(--font-family);
-  background-color: transparent;
-  border: 0px;
-  /* padding-top: 20px; */
-  margin-top: -1px;
+  /* background-color: transparent; */
+  /* border: 0px; */
+  /* margin-top: -1px; */
+
+  /* Remove arrow */
+  appearance: none;
+  /* -webkit-appearance: none; */
+  /* -moz-appearance: none; */
+  background: none;
+  background-color: var(--choice-color-back);
+  color: var(--choice-color-fore);
+  /* padding-right: 1em; */
+  text-align: center;
+  padding: var(--general-padding);
+
+  border: 0px solid #ccc;
+  border-radius: 8px;
 }
 
 option {
   color: black;
-  background-color: red;
+  background-color: var(--theme-text3);
   border-width: 0px;
+  font-size: var(--font-size-h2);
 }
 
 button {
@@ -135,8 +152,10 @@ body {
 
 .request {
   display: grid;
-  grid-template-columns: auto auto;
-  grid-template-rows: auto auto auto;
+  grid-template-columns: auto auto auto auto auto auto;
+  /* grid-template-columns: auto auto; */
+  /* grid-template-rows: auto auto auto; */
+  align-items: center;
   margin: var(--general-margin);
   padding: var(--general-padding);
 }
@@ -144,7 +163,7 @@ body {
 .request-key {
   text-align: right;
   padding-right: var(--general-padding);
-  white-space: nowrap;
+  white-space: pre;
 }
 
 .request-val {

@@ -60,3 +60,11 @@ export const MetricGs: Metric[] = [
     metricDict.f_fixture_venue_name,
     metricDict.f_league_season,
 ];
+
+export const MetricFs: Metric[] = [
+    metricDict.e_team_name,
+    metricDict.e_player_name,
+    metricDict.f_fixture_referee,
+    metricDict.f_fixture_venue_name,
+    metricDict.f_league_season,
+];

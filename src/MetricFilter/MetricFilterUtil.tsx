@@ -41,7 +41,7 @@ export function getKeyToVals (events: Db.Event[]): Record<string, TMetricFilter.
 }
 
 export function getFilterKeys (): TMetricFilter.SelectableKey[] {
-    const filterKeys: TMetricFilter.SelectableKey[] = metrics.metricList.map((value: Metric) => ({
+    const filterKeys: TMetricFilter.SelectableKey[] = metrics.MetricFs.map((value: Metric) => ({
         'displayName': value.singular,
         'id': value.key,
     }));

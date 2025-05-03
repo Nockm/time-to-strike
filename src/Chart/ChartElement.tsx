@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
-import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
-import type { TooltipProps } from 'recharts'; // eslint-disable-line no-duplicate-imports
+import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import type { TooltipProps } from 'recharts';
 import type { Item } from './chart';
 
 const root = document.documentElement;
