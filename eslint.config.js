@@ -66,6 +66,7 @@ export default tseslint.config(
       "max-params": "off",
       "max-statements": "off",
       "no-console": "off",
+      "no-duplicate-imports": "off",
       "no-inline-comments": "off",
       "no-ternary": "off",
       "one-var": "off",

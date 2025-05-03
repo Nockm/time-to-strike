@@ -12,8 +12,8 @@ type XFiller = ((items: Item[]) => Item[]);
 export type Metric = wordUtil.Word & {
     'evaluator': Evaluator;
     'formatter'?: Formatter;
-    'keyImageUrl'?: Db.EventKey;
-    'key': Db.EventKey;
+    'keyImageUrl'?: Db.EventId;
+    'id': Db.EventId;
     'xfiller'?: XFiller;
 };
 
@@ -32,8 +32,8 @@ function keyToSingular (key: string): string {
 export function getMetric (opts: {
     'evaluator'?: Evaluator;
     'formatter'?: Formatter;
-    'key': Db.EventKey;
-    'keyImageUrl'?: Db.EventKey;
+    'key': Db.EventId;
+    'keyImageUrl'?: Db.EventId;
     'plural'?: string;
     'singular'?: string;
     'xfiller'?: XFiller;
@@ -52,7 +52,7 @@ export function getMetric (opts: {
         ...{
             'evaluator': opts.evaluator || defaultEvaluator,
             'formatter': opts.formatter || defaultFormatter,
-            'key': opts.key,
+            'id': opts.key,
             'keyImageUrl': opts.keyImageUrl,
             'xfiller': opts.xfiller,
         },

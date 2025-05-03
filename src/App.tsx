@@ -28,10 +28,10 @@ const eventFilters: EventFilter[] = getEventFilters();
 const keyToVals: Record<string, TMetricFilter.SelectableVal[]> = MetricFilterUtil.getKeyToVals(db.events);
 
 function App (): JSX.Element {
-    const [selectedMetricXKey, setSelectedMetricXKey] = useState<string>(metrics.MetricXs[0].key);
-    const [selectedMetricGKey, setSelectedMetricGKey] = useState<string>();
+    const [selectedMetricXId, setSelectedMetricXId] = useState<string>(metrics.MetricXs[0].id);
+    const [selectedFilterYId, setSelectedFilterYId] = useState<string>(eventFilters[0].id);
+    const [selectedMetricGId, setSelectedMetricGId] = useState<string>();
     const [filters, setFilters] = useState<TMetricFilter.Selected[]>([{ 'key': TMetricFilter.idNoSelection, 'val': TMetricFilter.idNoSelection }]);
-    const [selectedFilterEId, setSelectedFilterEId] = useState<string>(eventFilters[0].id);
 
     const addFilter = (): void => {
         setFilters((prev) => prev.concat([{ 'key': TMetricFilter.idNoSelection, 'val': TMetricFilter.idNoSelection }]));
@@ -45,16 +45,16 @@ function App (): JSX.Element {
         setFilters((prev) => prev.map((filter, filterIndex) => filterIndex === index ? { ...filter, [field]: newValue } : filter));
     };
 
-    const selectedMetricX = metrics.MetricXs.find((item) => item.key === selectedMetricXKey);
+    const selectedMetricX = metrics.MetricXs.find((item) => item.id === selectedMetricXId);
     if (!selectedMetricX) {
         return <div>Invalid selected key</div>;
     }
 
-    const selectedMetricG = metrics.MetricGs.find((item) => item.key === selectedMetricGKey);
+    const selectedMetricG = metrics.MetricGs.find((item) => item.id === selectedMetricGId);
 
     let events: Db.Event[] = MetricFilterUtil.filterEvents(db.events, filters);
 
-    const selectedEventFilter = eventFilters.find((x) => x.id === selectedFilterEId);
+    const selectedEventFilter = eventFilters.find((x) => x.id === selectedFilterYId);
 
     if (!selectedEventFilter) {
         return <div>Invalid selected filter</div>;
@@ -89,22 +89,22 @@ function App (): JSX.Element {
                 <div className="toolbar">
                     <div className="request">
                         <div className="request-key">Show how </div>
-                        <select value={selectedFilterEId} onChange={(event) => { setSelectedFilterEId(event.target.value); }} >
+                        <select value={selectedFilterYId} onChange={(event) => { setSelectedFilterYId(event.target.value); }} >
                             {
                                 eventFilters.map((eventFilter) => <option key={eventFilter.id} value={eventFilter.id}>{eventFilter.Plural}</option>)
                             }
                         </select>
                         <div className="request-key"> change with </div>
-                        <select value={selectedMetricXKey} onChange={(event) => { setSelectedMetricXKey(event.target.value); }} >
+                        <select value={selectedMetricXId} onChange={(event) => { setSelectedMetricXId(event.target.value); }} >
                             {
-                                metrics.MetricXs.map((metric) => <option key={metric.key} value={metric.key}>{metric.Plural}</option>)
+                                metrics.MetricXs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Plural}</option>)
                             }
                         </select>
                         <div className="request-key"> for each </div>
-                        <select value={selectedMetricGKey} onChange={(event) => { setSelectedMetricGKey(event.target.value); }}>
+                        <select value={selectedMetricGId} onChange={(event) => { setSelectedMetricGId(event.target.value); }}>
                             <option></option>
                             {
-                                metrics.MetricGs.map((metric) => <option key={metric.key} value={metric.key}>{metric.Singular}</option>)
+                                metrics.MetricGs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Singular}</option>)
                             }
                         </select>
                     </div>
