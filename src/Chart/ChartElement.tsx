@@ -1,5 +1,5 @@
 import type { JSX } from 'react';
-import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import type { TooltipProps } from 'recharts'; // eslint-disable-line no-duplicate-imports
 import type { Item } from './chart';
 
@@ -8,7 +8,6 @@ const cardTickColor = getComputedStyle(root).getPropertyValue('--card-tick-color
     .trim();
 
 export interface Spec {
-    'title': string;
     'items': Item[];
     'maxY'?: number;
     'labelx': string;
@@ -42,7 +41,7 @@ export default function Chart ({ spec }: { 'spec': Spec }): JSX.Element {
         <>
             <ResponsiveContainer>
                 <BarChart data={spec.items}>
-                    <XAxis dataKey="xvalueformatted" stroke={cardTickColor} tick angle={90} interval={0} textAnchor="start" height={150} />
+                    <XAxis dataKey="xvalueformatted" stroke={cardTickColor} tick angle={90} interval={0} textAnchor="start" height={120} />
                     <YAxis domain={domain} />
                     <Tooltip content={CustomTooltip} />
                     <Bar dataKey="yvalue" />

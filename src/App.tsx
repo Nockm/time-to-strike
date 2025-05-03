@@ -37,7 +37,8 @@ const eventFilters: EventFilter[] = getEventFilters();
 
 const keyToVals: Record<string, TMetricFilter.SelectableVal[]> = MetricFilterUtil.getKeyToVals(db.events);
 
-function getChartItem (xvalue: string, metricX: Metric, events: Db.Event[]): chart.Item {
+function getChartItem (state: State, xvalue: string, events: Db.Event[]): chart.Item {
+    const { metricX } = state;
     const yvalue = events.length;
     const xvalueformatted = metricX.formatter
         ? metricX.formatter(xvalue)
@@ -49,7 +50,7 @@ function getChartItem (xvalue: string, metricX: Metric, events: Db.Event[]): cha
 
     return {
         fill,
-        'tooltipHeader': `${yvalue} at ${metricX.singular} ${xvalueformatted}`,
+        'tooltipHeader': `${yvalue} ${state.eventFilter.plural} at ${metricX.singular} ${xvalueformatted}`,
         'tooltipLines': events.sort((item1, item2) => item1.f_fixture_id - item2.f_fixture_id).map((event) => event.c_summary),
         xvalue,
         xvalueformatted,
@@ -63,7 +64,7 @@ function getChartSpec (state: State, dbEvents: Db.Event[], groupName: string): T
     let chartItems: chart.Item[] = xvalueEventsPairs.map(([
         xvalue,
         events,
-    ]) => getChartItem(xvalue, state.metricX, events));
+    ]) => getChartItem(state, xvalue, events));
 
     chartItems = counters.sortArrayByString(chartItems, (x) => x.xvalue);
 
@@ -76,13 +77,12 @@ function getChartSpec (state: State, dbEvents: Db.Event[], groupName: string): T
         : '';
 
     return {
-        'labelx': state.metricX.Singular,
-        'labely': state.eventFilter.displayName,
+        'labelx': state.metricX.Plural,
+        'labely': state.eventFilter.Plural,
         'labelg': groupName,
         'groupName': groupName || defaultGroupName,
         'groupImageUrl': groupImageUrl || defaultGroupImageUrl,
         'items': chartItems,
-        'title': `[${groupName}] ${state.eventFilter.displayName} x ${state.metricX.singular}`,
     };
 }
 
@@ -154,7 +154,7 @@ function App (): JSX.Element {
     const maxY = Math.max(...chartSpecs.map((x) => Math.max(...x.items.map((y) => y.yvalue))));
     chartSpecs.forEach((x) => { x.maxY = maxY; });
 
-    chartSpecs = counters.sortArrayByString(chartSpecs, (x) => x.title);
+    chartSpecs = counters.sortArrayByString(chartSpecs, (x) => x.labelg);
 
     return (
         <div className="container">
@@ -171,20 +171,20 @@ function App (): JSX.Element {
                         <div className="request-key">Show: </div>
                         <select value={selectedEventFilterId} onChange={(event) => { setSelectedEventFilterId(event.target.value); }} >
                             {
-                                eventFilters.map((eventFilter) => <option key={eventFilter.id} value={eventFilter.id}>{eventFilter.displayName}</option>)
+                                eventFilters.map((eventFilter) => <option key={eventFilter.id} value={eventFilter.id}>{eventFilter.Plural}</option>)
                             }
                         </select>
-                        <div className="request-key">Along: </div>
+                        <div className="request-key">Over: </div>
                         <select value={selectedMetricXKey} onChange={(event) => { setSelectedMetricXKey(event.target.value); }} >
                             {
-                                metrics.MetricXs.map((metric) => <option key={metric.key} value={metric.key}>{metric.plural}</option>)
+                                metrics.MetricXs.map((metric) => <option key={metric.key} value={metric.key}>{metric.Plural}</option>)
                             }
                         </select>
                         <div className="request-key">Split: </div>
                         <select value={selectedMetricGKey} onChange={(event) => { setSelectedMetricGKey(event.target.value); }}>
                             <option></option>
                             {
-                                metrics.MetricGs.map((metric) => <option key={metric.key} value={metric.key}>{metric.singular}</option>)
+                                metrics.MetricGs.map((metric) => <option key={metric.key} value={metric.key}>{metric.Plural}</option>)
                             }
                         </select>
                     </div>

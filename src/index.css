@@ -23,7 +23,7 @@
   --general-padding: 8px;
   --general-margin: 8px;
 
-  --debug-outline: 4px red dotted;
+  --debug-outline: 1px red dashed;
   --debug-outline: 0px red dotted;
 
   /* Assignments */
@@ -87,6 +87,8 @@ body {
 
 .header {
   flex: 0 0 auto;
+  margin: var(--general-margin);
+  padding: var(--general-padding);
 }
 
 .tooltip {
@@ -105,6 +107,8 @@ body {
 
 .debug-text {
   font-size: var(--font-size-h3);
+  margin: var(--general-margin);
+  padding: var(--general-padding);
 }
 
 /* Header */
@@ -125,6 +129,8 @@ body {
  .toolbar {
   display: flex;
   flex-direction: row;
+  margin: var(--general-margin);
+  padding: var(--general-padding);
  }
 
 .request {
@@ -209,7 +215,7 @@ body {
   align-items: center;
   background-color: var(--card-back);
   margin: var(--general-margin);
-  padding: var(--general-padding);
+  /* padding: var(--general-padding); */
 }
 
 /* Level 2 */
@@ -230,6 +236,7 @@ body {
 .card-title-secondary {
   font-weight: bold;
   font-size: var(--card-title-secondary-font-size);
+  padding-top: 6px;
 }
 
 .card-photo {
@@ -246,7 +253,7 @@ body {
   height: 500px;
   font-size: var(--card-tick-font-size);
   margin: var(--general-margin);
-  padding: var(--general-padding);
+  /* padding: var(--general-padding); */
 }
 
 /* Level 3 */

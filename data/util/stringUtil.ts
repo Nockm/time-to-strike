@@ -58,7 +58,7 @@ export function singularToPlural (singular: string): string {
         return `${singular.slice(0, -2)}a`;
     }
 
-    return singular;
+    return `${singular}s`;
 }
 
 export function toUppercaseFirstLetter (str: string): string {

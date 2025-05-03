@@ -1,15 +1,16 @@
 import type * as Db from '../../data/db/dbTypes.ts';
 import * as stringUtil from '../../data/util/stringUtil.ts';
+import type { Word, WordOpts } from '../../data/util/wordUtil.ts';
+import { getWord } from '../../data/util/wordUtil.ts';
 
 export const UNSELECTED = '-- Select --';
 
-export interface EventFilter {
+export type EventFilter = Word & {
     'id': string;
     'e_type': string | null;
     'e_detail': string | null;
     'e_comments': string | null;
-    'displayName': string;
-}
+};
 
 function getDisplayName (spec: string[]): string {
     let displayName = stringUtil.toUppercaseFirstLetter(spec[0]);
@@ -29,37 +30,29 @@ export function sortLambda<T> (array: T[], func: (item: T) => string): T[] {
     return array.sort((a: T, b: T) => func(a).localeCompare(func(b)));
 }
 
-function getCustomEventFilter (spec: string[], displayName?: string | null): EventFilter {
-    return {
-        'displayName': displayName || getDisplayName(spec),
-        'e_comments': spec.length >= 2 ? spec[2] : null,
-        'e_detail': spec.length >= 1 ? spec[1] : null,
-        'e_type': spec.length >= 0 ? spec[0] : null,
-        'id': getDisplayName(spec),
-    };
-}
+function getCustomEventFilter (spec: string[], wordOpts?: WordOpts): EventFilter {
+    const word = getWord(wordOpts || { 'singular': getDisplayName(spec) });
 
-export function getEventFiltersCustom (): EventFilter[] {
-    return [
-        getCustomEventFilter(['Goal'], 'Goal'),
-        getCustomEventFilter(['Goal', 'Own Goal'], 'Own Goal'),
-        getCustomEventFilter(['Goal', 'Penalty'], 'Penalty'),
-        getCustomEventFilter(['Card', 'Red Card'], 'Red Card'),
-        getCustomEventFilter(['Card', 'Yellow Card'], 'Yellow Card'),
-        getCustomEventFilter(['subst'], 'Substitution'),
-        getCustomEventFilter(['Var'], 'VAR'),
-    ];
+    return {
+        ...word,
+        ...{
+            'e_comments': spec.length >= 2 ? spec[2] : null,
+            'e_detail': spec.length >= 1 ? spec[1] : null,
+            'e_type': spec.length >= 0 ? spec[0] : null,
+            'id': getDisplayName(spec),
+        },
+    };
 }
 
 export function getEventFilters (): EventFilter[] {
     return [
-        getCustomEventFilter(['Goal'], 'Goal'),
-        getCustomEventFilter(['Goal', 'Own Goal'], 'Own Goal'),
-        getCustomEventFilter(['Goal', 'Penalty'], 'Penalty'),
-        getCustomEventFilter(['Card', 'Red Card'], 'Red Card'),
-        getCustomEventFilter(['Card', 'Yellow Card'], 'Yellow Card'),
-        getCustomEventFilter(['subst'], 'Substitution'),
-        getCustomEventFilter(['Var'], 'VAR'),
+        getCustomEventFilter(['Goal'], { 'singular': 'goal' }),
+        getCustomEventFilter(['Goal', 'Own Goal'], { 'singular': 'own goal' }),
+        getCustomEventFilter(['Goal', 'Penalty'], { 'singular': 'penalty' }),
+        getCustomEventFilter(['Card', 'Red Card'], { 'singular': 'red card' }),
+        getCustomEventFilter(['Card', 'Yellow Card'], { 'singular': 'yellow card' }),
+        getCustomEventFilter(['subst'], { 'singular': 'substitution' }),
+        getCustomEventFilter(['Var'], { 'singular': 'VAR calls' }),
     ];
 }
 
