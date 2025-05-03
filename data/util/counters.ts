@@ -70,3 +70,7 @@ function onlyUnique<T> (value: T, index: number, array: T[]): boolean {
 export function getUniqueValues<T> (array: T[]): T[] {
     return array.filter(onlyUnique);
 }
+
+export function sortLambda<T> (array: T[], func: (item: T) => string): T[] {
+    return array.sort((a: T, b: T) => func(a).localeCompare(func(b)));
+}
