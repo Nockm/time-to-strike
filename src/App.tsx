@@ -5,15 +5,12 @@ import type { JSX } from 'react';
 import * as counters from '../data/util/counters.ts';
 import * as metrics from './Metrics/metrics.tsx';
 import type * as Db from '../data/db/dbTypes.ts';
-import type * as TMetricFilter from './DynamicEventFilter/DynamicEventFilterElement.tsx';
+import * as eventTypeFilter from './EventTypeFilter/eventTypeFilter.tsx';
 import * as dynamicEventFilter from './DynamicEventFilter/dynamicEventFilter.tsx';
+import DynamicEventFilterElement from './DynamicEventFilter/DynamicEventFilterElement.tsx';
 import Chart from './Chart/ChartElement.tsx';
 import dbJsonCompressed from '../data/output/db.dat?raw';
 import * as b64ZipUtil from '../data/util/stringCompressionUtil.ts';
-import type { DynamicEventFilter } from './DynamicEventFilter/DynamicEventFilterElement.tsx';
-import DynamicEventFilterElement from './DynamicEventFilter/DynamicEventFilterElement.tsx';
-import * as eventTypeFilter from './EventTypeFilter/eventTypeFilter.tsx';
-import type { EventTypeFilter } from './EventTypeFilter/eventTypeFilter.tsx';
 import { getChartSpecs, type State } from './chartSpecUtil.ts';
 
 // Decompress and parse the database.
@@ -21,18 +18,18 @@ const dbJson: string = b64ZipUtil.decompressString(dbJsonCompressed);
 const db: Db.Root = JSON.parse(dbJson);
 
 // Get metrics.
-const filterKeys: TMetricFilter.EventKey[] = dynamicEventFilter.getFilterEventKeys();
+const filterKeys: dynamicEventFilter.EventKey[] = dynamicEventFilter.getFilterEventKeys();
 
 // Get events.
-const eventFilters: EventTypeFilter[] = eventTypeFilter.getEventTypeFilters();
+const eventFilters: eventTypeFilter.EventTypeFilter[] = eventTypeFilter.getEventTypeFilters();
 
-const keyToVals: Record<string, TMetricFilter.EventVal[]> = dynamicEventFilter.getEventKeyToValsLut(db.events);
+const keyToVals: Record<string, dynamicEventFilter.EventVal[]> = dynamicEventFilter.getEventKeyToValsLut(db.events);
 
 function App (): JSX.Element {
     const [selectedMetricXId, setSelectedMetricXId] = useState<string>(metrics.MetricXs[0].id);
     const [selectedFilterYId, setSelectedFilterYId] = useState<string>(eventFilters[0].id);
     const [selectedMetricGId, setSelectedMetricGId] = useState<string>();
-    const [filters, setFilters] = useState<TMetricFilter.DynamicEventFilter[]>([{ 'eventKey': null, 'eventVal': '...' }]);
+    const [filters, setFilters] = useState<dynamicEventFilter.DynamicEventFilter[]>([{ 'eventKey': null, 'eventVal': '...' }]);
 
     const addFilter = (): void => {
         setFilters((prev) => prev.concat([{ 'eventKey': null, 'eventVal': '...' }]));
@@ -42,7 +39,7 @@ function App (): JSX.Element {
         setFilters((prev) => prev.filter((_, i) => i !== index));
     };
 
-    const updateFilter = (index: number, field: keyof DynamicEventFilter, newValue: string): void => {
+    const updateFilter = (index: number, field: keyof dynamicEventFilter.DynamicEventFilter, newValue: string): void => {
         setFilters((prev) => prev.map((filter, filterIndex) => filterIndex === index ? { ...filter, [field]: newValue } : filter));
     };
 

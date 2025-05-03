@@ -1,23 +1,5 @@
 import type { JSX } from 'react';
-import type * as Db from '../../data/db/dbTypes.ts';
-
-export type EventKeyId = Db.EventId | null;
-export type EventValId = string | null;
-
-export interface DynamicEventFilter {
-    'eventKey': EventKeyId;
-    'eventVal': EventValId;
-}
-
-export interface EventKey {
-    'id': EventKeyId;
-    'name': string;
-}
-
-export interface EventVal {
-    'id': EventValId;
-    'name': string;
-}
+import type { DynamicEventFilter, EventKey, EventVal } from './dynamicEventFilter';
 
 export interface DynamicEventFilterElementProps {
     'filter': DynamicEventFilter;

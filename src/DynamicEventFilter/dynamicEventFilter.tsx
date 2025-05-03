@@ -1,7 +1,25 @@
 import type { Event } from '../../data/db/dbTypes.ts';
 import * as metrics from '../Metrics/metrics.tsx';
 import type { Metric } from '../Metrics/metric.tsx';
-import type { DynamicEventFilter, EventKey, EventKeyId, EventVal, EventValId } from './DynamicEventFilterElement.tsx';
+import type * as Db from '../../data/db/dbTypes.ts';
+
+export type EventKeyId = Db.EventId | null;
+export type EventValId = string | null;
+
+export interface DynamicEventFilter {
+    'eventKey': EventKeyId;
+    'eventVal': EventValId;
+}
+
+export interface EventKey {
+    'id': EventKeyId;
+    'name': string;
+}
+
+export interface EventVal {
+    'id': EventValId;
+    'name': string;
+}
 
 export function eventKeyIdToEventVals (eventKeyId: EventKeyId, events: Event[]): EventVal[] {
     if (eventKeyId === null) {
