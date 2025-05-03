@@ -1,10 +1,10 @@
-import * as TMetricFilter from './MetricFilterElement.tsx';
+import type * as TMetricFilter from './MetricFilterElement.tsx';
 import type * as Db from '../../data/db/dbTypes.ts';
 import * as metrics from '../Metrics/metrics.tsx';
 import type { Metric } from '../Metrics/metric.tsx';
 
 export function keyToSelectableItems (keyId: TMetricFilter.KeyId, events: Db.Event[]): TMetricFilter.SelectableVal[] {
-    if (keyId === TMetricFilter.idNoSelection) {
+    if (keyId === null) {
         return [];
     }
 
@@ -22,8 +22,8 @@ export function keyToSelectableItems (keyId: TMetricFilter.KeyId, events: Db.Eve
         }));
 
     selectableValues.unshift({
-        'displayName': TMetricFilter.displayNameNoSelection,
-        'id': TMetricFilter.idNoSelection,
+        'displayName': '...',
+        'id': null,
     });
 
     return selectableValues;
@@ -31,7 +31,7 @@ export function keyToSelectableItems (keyId: TMetricFilter.KeyId, events: Db.Eve
 
 export function getKeyToVals (events: Db.Event[]): Record<string, TMetricFilter.SelectableVal[]> {
     const eventKeys: TMetricFilter.KeyId[] = metrics.metricList.map((x) => x.id);
-    eventKeys.push(TMetricFilter.idNoSelection);
+    eventKeys.push(null);
 
     const entries: [TMetricFilter.KeyId, TMetricFilter.SelectableVal[]][] = eventKeys.map((x) => [x, keyToSelectableItems(x, events)]);
 
@@ -46,7 +46,7 @@ export function getFilterKeys (): TMetricFilter.SelectableKey[] {
         'id': value.id,
     }));
 
-    filterKeys.unshift({ 'displayName': TMetricFilter.displayNameNoSelection, 'id': TMetricFilter.idNoSelection });
+    filterKeys.unshift({ 'displayName': '...', 'id': null });
 
     return filterKeys;
 }
@@ -56,10 +56,10 @@ export function filterEvents (events: Db.Event[], filters: TMetricFilter.Selecte
 
     for (const filter of filters) {
         filteredEvents = filteredEvents.filter((event: Db.Event): boolean => {
-            if (filter.key === TMetricFilter.idNoSelection) {
+            if (filter.key === null) {
                 return true;
             }
-            if (filter.val === TMetricFilter.idNoSelection) {
+            if (filter.val === null) {
                 return true;
             }
 

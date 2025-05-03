@@ -1,10 +1,7 @@
 import type { JSX } from 'react';
 import type * as Db from '../../data/db/dbTypes.ts';
 
-export const idNoSelection = '-- Select --';
-export const displayNameNoSelection = '-- Select --';
-
-export type KeyId = Db.EventId | '-- Select --';
+export type KeyId = Db.EventId | null;
 export type ValId = string | null;
 
 export interface Selected {

@@ -31,10 +31,10 @@ function App (): JSX.Element {
     const [selectedMetricXId, setSelectedMetricXId] = useState<string>(metrics.MetricXs[0].id);
     const [selectedFilterYId, setSelectedFilterYId] = useState<string>(eventFilters[0].id);
     const [selectedMetricGId, setSelectedMetricGId] = useState<string>();
-    const [filters, setFilters] = useState<TMetricFilter.Selected[]>([{ 'key': TMetricFilter.idNoSelection, 'val': TMetricFilter.idNoSelection }]);
+    const [filters, setFilters] = useState<TMetricFilter.Selected[]>([{ 'key': null, 'val': '...' }]);
 
     const addFilter = (): void => {
-        setFilters((prev) => prev.concat([{ 'key': TMetricFilter.idNoSelection, 'val': TMetricFilter.idNoSelection }]));
+        setFilters((prev) => prev.concat([{ 'key': null, 'val': '...' }]));
     };
 
     const deleteFilter = (index: number): void => {
@@ -119,7 +119,7 @@ function App (): JSX.Element {
                         }}>Add Filter</button>
                         {
                             filters.map((filter, index) => {
-                                const vals = keyToVals[filter.key];
+                                const vals = filter.key ? keyToVals[filter.key] : [];
 
                                 return <MetricFilter
                                     key={index}

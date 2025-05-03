@@ -3,8 +3,6 @@ import * as stringUtil from '../../data/util/stringUtil.ts';
 import type { Word, WordOpts } from '../../data/util/wordUtil.ts';
 import { getWord } from '../../data/util/wordUtil.ts';
 
-export const UNSELECTED = '-- Select --';
-
 export type EventFilter = Word & {
     'id': string;
     'e_type': string | null;
