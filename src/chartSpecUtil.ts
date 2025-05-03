@@ -1,5 +1,3 @@
-/* eslint-disable sort-keys */
-
 import './App.css';
 import * as counters from '../data/util/counters.ts';
 import type { Metric } from './Metrics/metric.tsx';

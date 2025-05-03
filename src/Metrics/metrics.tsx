@@ -3,7 +3,6 @@
 import { getMetric, type Metric } from './metric.tsx';
 import * as c_timecode from './c_timecode.tsx';
 
-/* eslint-disable sort-keys */
 export const metricDict: Record<string, Metric> = {
     'c_summary': getMetric({ 'key': 'c_summary' }),
     'c_timecode': getMetric({ 'key': 'c_timecode', 'formatter': c_timecode.formatter, 'xfiller': c_timecode.filler, 'singular': 'time', 'plural': 'time' }),
@@ -35,7 +34,6 @@ export const metricDict: Record<string, Metric> = {
     'f_teams_away_name': getMetric({ 'key': 'f_teams_away_name' }),
     'f_teams_home_name': getMetric({ 'key': 'f_teams_home_name' }),
 };
-/* eslint-enable sort-keys */
 
 export const metricList: Metric[] = Object.values(metricDict);
 
