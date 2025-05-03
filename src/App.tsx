@@ -6,14 +6,14 @@ import * as counters from '../data/util/counters.ts';
 import * as metrics from './Metrics/metrics.tsx';
 import type * as Db from '../data/db/dbTypes.ts';
 import type * as TMetricFilter from './DynamicEventFilter/DynamicEventFilterElement.tsx';
-import * as MetricFilterUtil from './DynamicEventFilter/dynamicEventFilter.tsx';
+import * as dynamicEventFilter from './DynamicEventFilter/dynamicEventFilter.tsx';
 import Chart from './Chart/ChartElement.tsx';
 import dbJsonCompressed from '../data/output/db.dat?raw';
 import * as b64ZipUtil from '../data/util/stringCompressionUtil.ts';
 import type { DynamicEventFilter } from './DynamicEventFilter/DynamicEventFilterElement.tsx';
 import DynamicEventFilterElement from './DynamicEventFilter/DynamicEventFilterElement.tsx';
-import { eventFilterAccept, getEventFilters } from './EventFilter/eventFilterUtil.tsx';
-import type { EventFilter } from './EventFilter/eventFilterUtil.tsx';
+import * as eventTypeFilter from './EventTypeFilter/eventTypeFilter.tsx';
+import type { EventTypeFilter } from './EventTypeFilter/eventTypeFilter.tsx';
 import { getChartSpecs, type State } from './chartSpecUtil.ts';
 
 // Decompress and parse the database.
@@ -21,12 +21,12 @@ const dbJson: string = b64ZipUtil.decompressString(dbJsonCompressed);
 const db: Db.Root = JSON.parse(dbJson);
 
 // Get metrics.
-const filterKeys: TMetricFilter.EventKey[] = MetricFilterUtil.getFilterEventKeys();
+const filterKeys: TMetricFilter.EventKey[] = dynamicEventFilter.getFilterEventKeys();
 
 // Get events.
-const eventFilters: EventFilter[] = getEventFilters();
+const eventFilters: EventTypeFilter[] = eventTypeFilter.getEventTypeFilters();
 
-const keyToVals: Record<string, TMetricFilter.EventVal[]> = MetricFilterUtil.getEventKeyToValsLut(db.events);
+const keyToVals: Record<string, TMetricFilter.EventVal[]> = dynamicEventFilter.getEventKeyToValsLut(db.events);
 
 function App (): JSX.Element {
     const [selectedMetricXId, setSelectedMetricXId] = useState<string>(metrics.MetricXs[0].id);
@@ -53,7 +53,7 @@ function App (): JSX.Element {
 
     const selectedMetricG = metrics.MetricGs.find((item) => item.id === selectedMetricGId);
 
-    let events: Db.Event[] = MetricFilterUtil.filterEvents(db.events, filters);
+    let events: Db.Event[] = dynamicEventFilter.filterEvents(db.events, filters);
 
     const selectedEventFilter = eventFilters.find((x) => x.id === selectedFilterYId);
 
@@ -61,7 +61,7 @@ function App (): JSX.Element {
         return <div>Invalid selected filter</div>;
     }
     if (selectedEventFilter) {
-        events = events.filter((event) => eventFilterAccept(event, selectedEventFilter));
+        events = events.filter((event) => eventTypeFilter.filterEvent(event, selectedEventFilter));
     }
 
     const userSelection: State = {

@@ -4,7 +4,7 @@ import type { Metric } from './Metrics/metric.tsx';
 import type * as chart from './Chart/chart.tsx';
 import type * as Db from '../data/db/dbTypes.ts';
 import type * as TChart from './Chart/ChartElement.tsx';
-import type { EventFilter } from './EventFilter/eventFilterUtil.tsx';
+import type { EventTypeFilter } from './EventTypeFilter/eventTypeFilter.tsx';
 
 const root = document.documentElement;
 
@@ -14,7 +14,7 @@ const cardBar2 = getComputedStyle(root).getPropertyValue('--card-bar2')
     .trim();
 
 export interface State {
-    'eventFilter': EventFilter;
+    'eventFilter': EventTypeFilter;
     'metricX': Metric;
     'metricG'?: Metric;
 }
