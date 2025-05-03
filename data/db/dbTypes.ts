@@ -39,4 +39,4 @@ export interface Root {
     'events': Event[];
 }
 
-export type EventId = keyof Event;
+export type EventKey = keyof Event;

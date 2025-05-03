@@ -3,7 +3,7 @@ import * as metrics from '../Metrics/metrics.tsx';
 import type { Metric } from '../Metrics/metric.tsx';
 import type * as Db from '../../data/db/dbTypes.ts';
 
-export type EventKeyId = Db.EventId | null;
+export type EventKeyId = Db.EventKey | null;
 export type EventValId = string | null;
 
 export interface DynamicEventFilter {
