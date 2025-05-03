@@ -3,15 +3,24 @@ import * as counters from '../data/util/counters.ts';
 import type { Metric } from './Metrics/metric.tsx';
 import type * as chart from './Chart/chart.tsx';
 import type * as Db from '../data/db/dbTypes.ts';
-import type * as TChart from './Chart/ChartElement.tsx';
 import type { EventTypeFilter } from './EventTypeFilter/eventTypeFilter.tsx';
+import type { ChartElementProps } from './Chart/ChartElement.tsx';
+
+export type ChartSpec = ChartElementProps & {
+    'labelX': string;
+    'labelY': string;
+    'labelG': string;
+    'groupName'?: string;
+    'groupImageUrl'?: string;
+};
 
 const root = document.documentElement;
 
-const cardBar1 = getComputedStyle(root).getPropertyValue('--card-bar1')
-    .trim();
-const cardBar2 = getComputedStyle(root).getPropertyValue('--card-bar2')
-    .trim();
+/* eslint-disable @stylistic/js/newline-per-chained-call */
+const cardBar1 = getComputedStyle(root).getPropertyValue('--card-bar1').trim();
+const cardBar2 = getComputedStyle(root).getPropertyValue('--card-bar2').trim();
+const cardTickColor = getComputedStyle(root).getPropertyValue('--card-tick-color').trim();
+/* eslint-enable @stylistic/js/newline-per-chained-call */
 
 export interface State {
     'eventFilter': EventTypeFilter;
@@ -40,7 +49,7 @@ function getChartItem (state: State, xvalue: string, events: Db.Event[]): chart.
     };
 }
 
-function getChartSpec (state: State, dbEvents: Db.Event[], groupName: string): TChart.Spec {
+function getChartSpec (state: State, dbEvents: Db.Event[], groupName: string): ChartSpec {
     const xvalueEventsPairs = counters.groupByToTuples<Db.Event, string>(dbEvents, state.metricX.evaluator);
 
     let chartItems: chart.Item[] = xvalueEventsPairs.map(([
@@ -59,16 +68,17 @@ function getChartSpec (state: State, dbEvents: Db.Event[], groupName: string): T
         : '';
 
     return {
-        'labelx': state.metricX.Plural,
-        'labely': state.eventFilter.Plural,
-        'labelg': groupName,
+        'tickColor': cardTickColor,
+        'labelX': state.metricX.Plural,
+        'labelY': state.eventFilter.Plural,
+        'labelG': groupName,
         'groupName': groupName || '',
         'groupImageUrl': groupImageUrl || '',
         'items': chartItems,
     };
 }
 
-export function getChartSpecs (state: State, dbEvents: Db.Event[]): TChart.Spec[] {
+export function getChartSpecs (state: State, dbEvents: Db.Event[]): ChartSpec[] {
     if (!state.metricG) {
         return [getChartSpec(state, dbEvents, '')];
     }

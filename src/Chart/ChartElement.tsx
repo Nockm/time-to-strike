@@ -3,21 +3,13 @@ import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recha
 import type { TooltipProps } from 'recharts';
 import type { Item } from './chart';
 
-const root = document.documentElement;
-const cardTickColor = getComputedStyle(root).getPropertyValue('--card-tick-color')
-    .trim();
-
-export interface Spec {
+export interface ChartElementProps {
     'items': Item[];
     'maxY'?: number;
-    'labelx': string;
-    'labely': string;
-    'labelg': string;
-    'groupName'?: string;
-    'groupImageUrl'?: string;
+    'tickColor': string;
 }
 
-const CustomTooltip = ({ active, payload }: TooltipProps<number, string>): JSX.Element | null => {
+const ItemTooltip = ({ active, payload }: TooltipProps<number, string>): JSX.Element | null => {
     if (active && payload?.length) {
         const item: Item = payload[0].payload;
         return (
@@ -33,17 +25,20 @@ const CustomTooltip = ({ active, payload }: TooltipProps<number, string>): JSX.E
     return null;
 };
 
-export default function Chart ({ spec }: { 'spec': Spec }): JSX.Element {
-    // eslint-disable-next-line no-undefined
-    const domain = spec.maxY ? [0, spec.maxY] : undefined;
+export default function ChartElement ({
+    items,
+    maxY,
+    tickColor,
+}: ChartElementProps): JSX.Element {
+    const domain = maxY ? [0, maxY] : undefined; // eslint-disable-line no-undefined
 
     return (
         <>
             <ResponsiveContainer>
-                <BarChart data={spec.items}>
-                    <XAxis dataKey="xvalueformatted" stroke={cardTickColor} tick angle={90} interval={0} textAnchor="start" height={120} />
+                <BarChart data={items}>
+                    <XAxis dataKey="xvalueformatted" stroke={tickColor} tick angle={90} interval={0} textAnchor="start" height={120} />
                     <YAxis domain={domain} />
-                    <Tooltip content={CustomTooltip} />
+                    <Tooltip content={ItemTooltip} />
                     <Bar dataKey="yvalue" />
                 </BarChart>
             </ResponsiveContainer>

@@ -8,7 +8,7 @@ import type * as Db from '../data/db/dbTypes.ts';
 import * as eventTypeFilter from './EventTypeFilter/eventTypeFilter.tsx';
 import * as dynamicEventFilter from './DynamicEventFilter/dynamicEventFilter.tsx';
 import DynamicEventFilterElement from './DynamicEventFilter/DynamicEventFilterElement.tsx';
-import Chart from './Chart/ChartElement.tsx';
+import ChartElement from './Chart/ChartElement.tsx';
 import dbJsonCompressed from '../data/output/db.dat?raw';
 import * as b64ZipUtil from '../data/util/stringCompressionUtil.ts';
 import { getChartSpecs, type State } from './chartSpecUtil.ts';
@@ -72,7 +72,7 @@ function App (): JSX.Element {
     const maxY = Math.max(...chartSpecs.map((x) => Math.max(...x.items.map((y) => y.yvalue))));
     chartSpecs.forEach((x) => { x.maxY = maxY; });
 
-    chartSpecs = counters.sortArrayByString(chartSpecs, (x) => x.labelg);
+    chartSpecs = counters.sortArrayByString(chartSpecs, (x) => x.labelG);
 
     return (
         <div className="container">
@@ -154,17 +154,24 @@ function App (): JSX.Element {
             <div className="cards">
                 <div >
                     {
-                        chartSpecs.map((chartSpec, index) => <div key={index}>
+                        chartSpecs.map(({
+                            groupImageUrl,
+                            items,
+                            labelG,
+                            labelX,
+                            labelY,
+                            tickColor,
+                        }, index) => <div key={index}>
                             <div className="card">
                                 <div className="card-title">
-                                    <div className="card-title-primary"><b>{chartSpec.labely}  ×  {chartSpec.labelx}</b></div>
-                                    <div className="card-title-secondary"><div>{chartSpec.labelg}</div></div>
+                                    <div className="card-title-primary"><b>{labelY}  ×  {labelX}</b></div>
+                                    <div className="card-title-secondary"><div>{labelG}</div></div>
                                 </div>
                                 <div className="card-photo">
-                                    <img className="card-photo-image" src={chartSpec.groupImageUrl}></img>
+                                    <img className="card-photo-image" src={groupImageUrl}></img>
                                 </div>
                                 <div className="card-chart">
-                                    <Chart spec={chartSpec}></Chart>
+                                    <ChartElement items={items} maxY={maxY} tickColor={tickColor}></ChartElement>
                                 </div>
                             </div>
                         </div>)
