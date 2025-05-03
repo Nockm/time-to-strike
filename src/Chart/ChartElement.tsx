@@ -5,7 +5,7 @@ import type { Item } from './chart';
 
 export interface ChartElementProps {
     'items': Item[];
-    'maxY'?: number;
+    'maxY': number;
     'tickColor': string;
 }
 

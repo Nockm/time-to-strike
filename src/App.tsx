@@ -2,16 +2,16 @@
 import './App.css';
 import { useState } from 'react';
 import type { JSX } from 'react';
-import * as counters from '../data/util/counters.ts';
-import * as metrics from './Metrics/metrics.tsx';
 import type * as Db from '../data/db/dbTypes.ts';
-import * as eventTypeFilter from './EventTypeFilter/eventTypeFilter.tsx';
+import dbJsonCompressed from '../data/output/db.dat?raw';
+import * as counters from '../data/util/counters.ts';
+import * as b64ZipUtil from '../data/util/stringCompressionUtil.ts';
+import ChartElement from './Chart/ChartElement.tsx';
+import { getChartSpecs } from './chartSpecUtil.ts';
 import * as dynamicEventFilter from './DynamicEventFilter/dynamicEventFilter.tsx';
 import DynamicEventFilterElement from './DynamicEventFilter/DynamicEventFilterElement.tsx';
-import ChartElement from './Chart/ChartElement.tsx';
-import dbJsonCompressed from '../data/output/db.dat?raw';
-import * as b64ZipUtil from '../data/util/stringCompressionUtil.ts';
-import { getChartSpecs, type State } from './chartSpecUtil.ts';
+import * as eventTypeFilter from './EventTypeFilter/eventTypeFilter.tsx';
+import * as metrics from './Metrics/metrics.tsx';
 
 // Decompress and parse the database.
 const dbJson: string = b64ZipUtil.decompressString(dbJsonCompressed);
@@ -23,12 +23,14 @@ const filterKeys: dynamicEventFilter.EventKey[] = dynamicEventFilter.getFilterEv
 // Get events.
 const eventFilters: eventTypeFilter.EventTypeFilter[] = eventTypeFilter.getEventTypeFilters();
 
+// Pre-compute LUT for dynamic filters.
 const keyToVals: Record<string, dynamicEventFilter.EventVal[]> = dynamicEventFilter.getEventKeyToValsLut(db.events);
 
 function App (): JSX.Element {
-    const [selectedMetricXId, setSelectedMetricXId] = useState<string>(metrics.MetricXs[0].id);
-    const [selectedFilterYId, setSelectedFilterYId] = useState<string>(eventFilters[0].id);
-    const [selectedMetricGId, setSelectedMetricGId] = useState<string>();
+    // State.
+    const [metricXId, setMetricXId] = useState<string>(metrics.MetricXs[0].id);
+    const [filterYId, setFilterYId] = useState<string>(eventFilters[0].id);
+    const [metricGId, setMetricGId] = useState<string>();
     const [filters, setFilters] = useState<dynamicEventFilter.DynamicEventFilter[]>([{ 'eventKey': null, 'eventVal': '...' }]);
 
     const addFilter = (): void => {
@@ -43,116 +45,79 @@ function App (): JSX.Element {
         setFilters((prev) => prev.map((filter, filterIndex) => filterIndex === index ? { ...filter, [field]: newValue } : filter));
     };
 
-    const selectedMetricX = metrics.MetricXs.find((item) => item.id === selectedMetricXId);
-    if (!selectedMetricX) {
-        return <div>Invalid selected key</div>;
+    // Validate state.
+    const metricX = metrics.MetricXs.find((x) => x.id === metricXId);
+    const metricG = metrics.MetricGs.find((x) => x.id === metricGId);
+    const filterY = eventFilters.find((x) => x.id === filterYId);
+
+    if (!metricX) {
+        return <div>Invalid selected X</div>;
     }
 
-    const selectedMetricG = metrics.MetricGs.find((item) => item.id === selectedMetricGId);
-
-    let events: Db.Event[] = dynamicEventFilter.filterEvents(db.events, filters);
-
-    const selectedEventFilter = eventFilters.find((x) => x.id === selectedFilterYId);
-
-    if (!selectedEventFilter) {
-        return <div>Invalid selected filter</div>;
-    }
-    if (selectedEventFilter) {
-        events = events.filter((event) => eventTypeFilter.filterEvent(event, selectedEventFilter));
+    if (!filterY) {
+        return <div>Invalid selected Y</div>;
     }
 
-    const userSelection: State = {
-        'eventFilter': selectedEventFilter,
-        'metricG': selectedMetricG,
-        'metricX': selectedMetricX,
-    };
+    // Filter events.
+    let events: Db.Event[] = db.events;
+    events = events.filter((event) => eventTypeFilter.filterEvent(event, filterY));
+    events = dynamicEventFilter.filterEvents(events, filters);
 
-    let chartSpecs = getChartSpecs(userSelection, events);
+    // Get chart parameters.
+    let chartSpecs = getChartSpecs({
+        filterY,
+        metricG,
+        metricX,
+    }, events);
 
-    const maxY = Math.max(...chartSpecs.map((x) => Math.max(...x.items.map((y) => y.yvalue))));
-    chartSpecs.forEach((x) => { x.maxY = maxY; });
+    // Calculate the largest y-value; all charts will have this extent.
+    const globalMaxY = Math.max(...chartSpecs.map((x) => Math.max(...x.items.map((y) => y.yvalue))));
+    chartSpecs.forEach((x) => { x.maxY = globalMaxY; });
 
+    // Sort charts in alphabetical order.
     chartSpecs = counters.sortArrayByString(chartSpecs, (x) => x.labelG);
 
     return (
         <div className="container">
-            {/*
-            *
-            * Header
-            *
-            */}
             <div className="header">
                 <div className="debug-text">{new Date().toUTCString()}</div>
-
                 <div className="toolbar">
                     <div className="request">
                         <div className="request-key">Show how </div>
-                        <select value={selectedFilterYId} onChange={(event) => { setSelectedFilterYId(event.target.value); }} >
-                            {
-                                eventFilters.map((eventFilter) => <option key={eventFilter.id} value={eventFilter.id}>{eventFilter.Plural}</option>)
-                            }
+                        <select value={filterYId} onChange={(event) => { setFilterYId(event.target.value); }}>
+                            { eventFilters.map((eventFilter) => <option key={eventFilter.id} value={eventFilter.id}>{eventFilter.Plural}</option>) }
                         </select>
                         <div className="request-key"> change with </div>
-                        <select value={selectedMetricXId} onChange={(event) => { setSelectedMetricXId(event.target.value); }} >
-                            {
-                                metrics.MetricXs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Plural}</option>)
-                            }
+                        <select value={metricXId} onChange={(event) => { setMetricXId(event.target.value); }}>
+                            { metrics.MetricXs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Plural}</option>) }
                         </select>
                         <div className="request-key"> for each </div>
-                        <select value={selectedMetricGId} onChange={(event) => { setSelectedMetricGId(event.target.value); }}>
+                        <select value={metricGId} onChange={(event) => { setMetricGId(event.target.value); }}>
                             <option></option>
-                            {
-                                metrics.MetricGs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Singular}</option>)
-                            }
+                            { metrics.MetricGs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Singular}</option>) }
                         </select>
                     </div>
-
                     <div style={{ 'width': '100%' }}></div>
-
                     <div className="filter">
                         <div></div>
                         <div></div>
-                        <button className="filter-button" onClick={(): void => {
-                            addFilter();
-                        }}>Add Filter</button>
+                        <button className="filter-button" onClick={(): void => { addFilter(); }}>Add Filter</button>
                         {
-                            filters.map((filter, index) => {
-                                const vals = filter.eventKey ? keyToVals[filter.eventKey] : [];
-
-                                return <DynamicEventFilterElement
-                                    key={index}
-                                    eventKeys={filterKeys}
-                                    eventVals={vals}
-                                    filter={filters[index]}
-                                    onDelete={() => {
-                                        deleteFilter(index);
-                                    }}
-                                    onKeyChange={(newKey) => {
-                                        updateFilter(index, 'eventKey', newKey);
-                                    }}
-                                    onValChange={(newVal) => {
-                                        updateFilter(index, 'eventVal', newVal);
-                                    }}
-                                ></DynamicEventFilterElement>;
-                            })
+                            filters.map((filter, index) => <DynamicEventFilterElement
+                                key={index}
+                                eventKeys={filterKeys}
+                                eventVals={filter.eventKey ? keyToVals[filter.eventKey] : []}
+                                filter={filters[index]}
+                                onDelete={() => { deleteFilter(index); }}
+                                onKeyChange={(newKey) => { updateFilter(index, 'eventKey', newKey); }}
+                                onValChange={(newVal) => { updateFilter(index, 'eventVal', newVal); }}
+                            ></DynamicEventFilterElement>)
                         }
                     </div>
                 </div>
-
-
             </div>
-            {/*
-            *
-            * Filter
-            *
-            */}
-            {/*
-              *
-              * Content
-              *
-            */}
             <div className="cards">
-                <div >
+                <div>
                     {
                         chartSpecs.map(({
                             groupImageUrl,
@@ -160,6 +125,7 @@ function App (): JSX.Element {
                             labelG,
                             labelX,
                             labelY,
+                            maxY,
                             tickColor,
                         }, index) => <div key={index}>
                             <div className="card">

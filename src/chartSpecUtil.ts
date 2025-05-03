@@ -23,7 +23,7 @@ const cardTickColor = getComputedStyle(root).getPropertyValue('--card-tick-color
 /* eslint-enable @stylistic/js/newline-per-chained-call */
 
 export interface State {
-    'eventFilter': EventTypeFilter;
+    'filterY': EventTypeFilter;
     'metricX': Metric;
     'metricG'?: Metric;
 }
@@ -41,7 +41,7 @@ function getChartItem (state: State, xvalue: string, events: Db.Event[]): chart.
 
     return {
         fill,
-        'tooltipHeader': `${yvalue} ${state.eventFilter.plural} at ${metricX.singular} ${xvalueformatted}`,
+        'tooltipHeader': `${yvalue} ${state.filterY.plural} at ${metricX.singular} ${xvalueformatted}`,
         'tooltipLines': events.sort((item1, item2) => item1.f_fixture_id - item2.f_fixture_id).map((event) => event.c_summary),
         xvalue,
         xvalueformatted,
@@ -70,11 +70,12 @@ function getChartSpec (state: State, dbEvents: Db.Event[], groupName: string): C
     return {
         'tickColor': cardTickColor,
         'labelX': state.metricX.Plural,
-        'labelY': state.eventFilter.Plural,
+        'labelY': state.filterY.Plural,
         'labelG': groupName,
         'groupName': groupName || '',
         'groupImageUrl': groupImageUrl || '',
         'items': chartItems,
+        'maxY': 0,
     };
 }
 
