@@ -5,6 +5,7 @@ import type * as chart from './Chart/chart.tsx';
 import type * as Db from '../data/db/dbTypes.ts';
 import type { EventTypeFilter } from './EventTypeFilter/eventTypeFilter.tsx';
 import type { ChartElementProps } from './Chart/ChartElement.tsx';
+import { quantLower } from '../data/util/wordUtil.ts';
 
 export type ChartSpec = ChartElementProps & {
     'labelX': string;
@@ -41,7 +42,7 @@ function getChartItem (state: State, xvalue: string, events: Db.Event[]): chart.
 
     return {
         fill,
-        'tooltipHeader': `${yvalue} ${state.filterY.plural} at ${metricX.singular} ${xvalueformatted}`,
+        'tooltipHeader': `${yvalue} ${quantLower(state.filterY, yvalue)} at ${metricX.singular} ${xvalueformatted}`,
         'tooltipLines': events.sort((item1, item2) => item1.f_fixture_id - item2.f_fixture_id).map((event) => event.c_summary),
         xvalue,
         xvalueformatted,

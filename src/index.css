@@ -7,60 +7,51 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
 
-
-
-  --theme-text: hsl(10, 20%, 20%);
-  --theme-background: hsl(10, 10%, 98%);
-  --theme-primary: hsl(10, 80%, 50%);
-  --theme-secondary: hsl(10, 60%, 50%);
-  --theme-highlight: hsl(10, 40%, 90%);
-  --theme-purple: hsl(250, 60%, 30%);
-  --theme-muted: hsl(10, 20%, 94%);
-  --theme-gray: hsl(10, 20%, 50%);
-
-
-  --color-app-back: #222;
-  --color-app-fore: white;
-
-  --color-app-logo-back: #000;
-  --color-app-logo-fore: white;
-
-  --color-app-top-back: #222;
-  --color-app-top-fore: white;
-
-  --panel-bg: #333;
-
-  --color-card-back: #3e5a2c;
-  --color-card-border: 2px #CCC solid;
-  --color-card-border-radius: 16px;
-  --color-card-fore: #FCFCFC;
-  --color-card-bar1: #FEFEFE;
-  --color-card-bar2: orange;
-  --color-param-fore: #444;
-  --color-param-back: white;
-
-  --card-tick-font-size: var(--font-size-h3);
-  background-color: var(--color-app-back);
-  color: var(--color-app-fore);
-
-  /* Parameters */
-
   --font-family: leaguespartan, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  --font-size-h1: 25px;
-  --font-size-h2: 15px;
-  --font-size-h3: 10px;
+  --font-size-h1: 24px;
+  --font-size-h2: 16px;
+  --font-size-h3: 12px;
+  --general-spacing-h1: 32px;
+  --general-spacing-h2: 16px;
+  --general-spacing-h3: 12px;
 
-
-  --debug-outline: 1px red dashed;
-  --debug-outline: 0px red dotted;
+  --theme-primary-bg: #3e5a2c;
+  --theme-primary-fg: #FFF;
+  --theme-secondary-bg: #222;
+  --theme-secondary-fg: #DDD;
+  --theme-header-bg: #111;
+  --theme-header-fg: #EEE;
+  --theme-alternative-bg: yellow;
+  --theme-alternative-fg: black;
+  --theme-accent-bg: orange;
 
   /* Assignments */
+  /* Header */
+  --app-header-background-color: var(--theme-header-bg);
+  --app-header-color: var(--theme-header-fg);
 
-  font-size: var(--font-size-h1);
+  /* 30% */
+  --app-toolbar-color: var(--theme-secondary-fg);
+  --card-background-color: var(--theme-primary-bg);
+  --card-color: var(--theme-primary-fg);
+  --color-card-bar1: var(--theme-primary-fg);
+  --color-card-bar2: var(--theme-accent-bg);
+  --select-background-color: var(--theme-secondary-fg);
+  --select-color: var(--theme-secondary-bg);
+  --tooltip-background-color: var(--theme-alternative-fg);
+  --tooltip-color: var(--theme-alternative-bg);
+  background-color: var(--theme-secondary-bg);
+  color: var(--theme-secondary-fg);
+}
+
+@font-face {
+  font-family: 'leaguespartan';
+  src: url('/src/assets/League_Spartan/LeagueSpartan-VariableFont_wght.ttf') format('truetype');
 }
 
 div {
-  outline: var(--debug-outline);
+  outline: 1px red dashed;
+  outline: 0px red dotted;
 }
 
 select {
@@ -72,9 +63,9 @@ select {
   border-radius: 2px;
   padding: 8px;
 
-  background-color: var(--color-param-back);
+  background-color: var(--select-background-color);
   font-weight: bold;
-  color: var(--color-param-fore);
+  color: var(--select-color);
 }
 
 option {
@@ -87,27 +78,14 @@ button {
   font-family: var(--font-family);
 }
 
-@font-face {
-  font-family: 'leaguespartan';
-  src: url('/src/assets/League_Spartan/LeagueSpartan-VariableFont_wght.ttf') format('truetype');
-}
+/*
+   body
+*/
 
 body {
   margin: 0;
   display: flex;
   place-items: center;
-}
-
-/**********************
- **********************
- ***
- ***   App
- ***
- **********************
- *********************/
-
-.debug-text {
-  font-size: var(--font-size-h3);
 }
 
 .app {
@@ -117,210 +95,189 @@ body {
   overflow: hidden;
 }
 
+/*
+   app-header
+*/
+
 .app-header {
-  background-color: var(--color-app-logo-back);
-  color: var(--color-app-logo-fore);
+  background-color: var(--app-header-background-color);
+  color: var(--app-header-color);
   display: grid;
-  grid-template-columns: auto auto auto;
   align-items: center;
+  align-content: center;
 }
 
 .app-header-left {
-  display: grid;
-  text-align: left;
-  font-weight: bold;
+ grid-column: 1;
+ grid-row: 1;
+ justify-self: start;
+}
+
+.app-header-center {
+ grid-column: 1;
+ grid-row: 1;
+ justify-self: center;
 }
 
 .app-header-right {
-  text-align: right;
-  font-weight: lighter;
+ grid-column: 1;
+ grid-row: 1;
+ justify-self: end;
 }
 
-.app-top {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: row;
-  background-color: var(--color-app-top-back);
-  color: var(--color-app-top-fore);
-  /* margin: 32px; */
+.logo-text {
+  font-weight: bold;
 }
 
-.app-mid {
-  flex: 1 1 auto;
+.debug-text {
+  opacity: 0.5;
+}
+
+.status-text {
+  font-weight: bold;
+}
+
+/*
+   app-toolbar
+*/
+
+.app-toolbar-grid { display: grid; grid-template-columns: auto; grid-template-rows: auto auto; align-items: center; }
+.app-toolbar-grid-left { grid-column: 1; grid-row: 1; justify-self: start; }
+.app-toolbar-grid-center { grid-column: 1; grid-row: 1; justify-self: center; }
+.app-toolbar-grid-right { grid-column: 1; grid-row: 1; justify-self: end; }
+
+.app-toolbar {
+  margin-top: var(--general-spacing-h2);
+  margin-bottom: var(--general-spacing-h2);
+}
+
+/*
+   app-toolbar-query
+*/
+
+.query-main {
+  /* Grid */
+  display: grid;
+  grid-gap: var(--general-spacing-h2);
+  grid-template-columns: auto auto auto auto auto auto;
+  align-items: center;
+  /* Color */
+  /* Spacing */
+  /* Misc */
+}
+
+.query-main div { text-align: right; }
+.query-main select { font-size: var(--font-size-h1); }
+.query-main option { font-size: var(--font-size-h2); }
+
+/*
+   app-toolbar-filter
+*/
+
+.query-filter {
+  /* Grid */
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  align-items: center;
+  /* Color */
+  /* Spacing */
+  padding: 16px;
+  /* Misc */
+  font-size: var(--font-size-h2);
+  grid-gap: var(--general-spacing-h3);
+}
+
+.query-filter select { font-size: var(--font-size-h2); }
+.query-filter option { font-size: var(--font-size-h3); }
+.query-filter div { text-align: right; }
+.query-filter select:first-of-type { grid-column: span 3; }
+
+ /*
+    app-cards
+ */
+
+.app-cards {
   overflow-y: auto;
 }
 
-.panel {
-  /* background-color: var(--panel-bg); */
-  /* outline: 1px dotted white; */
-  /* border-radius: var(--color-card-border-radius); */
-  /* border: var(--color-card-border); */
-}
-
-.panel-spacer {
-  width: 100%;
-  background-color: transparent;
-}
-
-/**********************
- **********************
- ***
- ***   Title
- ***
- **********************
- *********************/
- .title {
-  width: 100%;
- }
-
-/**********************
- **********************
- ***
- ***   Request
- ***
- **********************
- *********************/
-
-.request {
-  display: grid;
-  grid-template-columns: auto auto auto auto auto auto;
-  align-items: center;
-  /* margin: 32px; */
-  padding: 16px;
-  margin-left: 16px;
-}
-
-.request div {
-  text-align: right;
-  white-space: pre;
-}
-
-.request select {
-  font-size: var(--font-size-h1);
-}
-
-.request option {
-  font-size: var(--font-size-h2);
-}
-
-/**********************
- **********************
- ***
- ***   Filter
- ***
- **********************
- *********************/
-
-.filter {
-  display: grid;
-  grid-template-columns: auto auto auto auto auto;
-  white-space: pre;
-  font-size: var(--font-size-h2);
-  grid-gap: 10px; /* add 10px gap between rows and columns */
-  align-items: center;
-  /* margin: 32px; */
-  padding: 16px;
-}
-
-.filter select {
-  font-size: var(--font-size-h2);
-}
-
-.filter option {
-  font-size: var(--font-size-h3);
-}
-
-.filter div {
-  text-align: right;
-}
-
-.filter-select-group {
-  grid-column: span 3;
-}
-
-.filter-button-delete {
-  font-size: var(--font-size-h2);
-  border: 0px;
-  visibility: collapse;
-  width: 0px;
-}
-
-
-/**********************
- **********************
- ***
- ***   Card
- ***
- **********************
- *********************/
+.card-grid { display: grid; }
+.card-grid-top-center { grid-column: 1; grid-row: 1; justify-self: center; }
+.card-grid-top-right { grid-column: 1; grid-row: 1; justify-self: end; }
+.card-grid-mid { grid-column: 1; grid-row: 2; }
 
 .card {
-  display: grid;
-  grid-template-columns: auto;
-  grid-template-rows: auto auto;
-  align-items: center;
-
-  background-color: var(--color-card-back);
-  border: var(--color-card-border);
-  border-radius: var(--color-card-border-radius);
-  color: var(--color-card-fore);
-  margin: 32px;
-  margin-top: 0px;
-  padding-top: 32px;
-  padding-right: 32px;
-}
-
-.card-title {
-  grid-column: 1;
-  grid-row: 1;
-  justify-self: center;
+  /* Color */
+  background-color: var(--card-background-color);
+  color: var(--card-color);
+  /* Spacing */
+  border-radius: var(--general-spacing-h2);
+  margin-left:  var(--general-spacing-h1);
+  margin-right:  var(--general-spacing-h1);
+  margin-bottom:  var(--general-spacing-h1);
+  padding: var(--general-spacing-h2);
+  /* Misc */
 }
 
 .card-title-1 {
-  white-space: pre;
-  font-size: var(--card-title-primary-font-size);
+  /* Color */
+  /* Spacing */
+  /* Misc */
+  font-size: var(--font-size-h1);
 }
 
 .card-title-2 {
-  font-weight: bold;
+  /* Color */
+  /* Spacing */
+  /* Misc */
+  font-size: var(--font-size-h3);
+  font-weight: lighter;
   font-size: var(--card-title-secondary-font-size);
-  padding-top: 6px;
+  white-space: pre;
 }
 
 .card-image {
-  grid-column: 1;
-  grid-row: 1;
-  justify-self: end;
-  width: var(--card-photo-image-size);
-  height: var(--card-photo-image-size);
+  /* Color */
+  /* Spacing */
+  /* Misc */
+  width: 50px;
+  height: 50px;
 }
 
 .card-chart {
-  grid-column: 1;
-  grid-row: 2;
+  /* Color */
+  /* Spacing */
+  /* Misc */
+  font-size: var(--font-size-h3);
   height: 500px;
-  font-size: var(--card-tick-font-size);
 }
 
-/**********************
- **********************
- ***
- ***   Tooltip
- ***
- **********************
- *********************/
-
+/* Tooltip */
 
  .tooltip {
-  border: 1px solid black;
-  padding: 10px;
-  background-color: var(--popover);
-  color: var(--popover-foreground);
-  background-color: yellow;
-  color: black;
+  /* Color */
+  background-color: var(--tooltip-background-color);
+  color: var(--tooltip-color);
+  /* Spacing */
+  margin: var(--general-spacing-h3);
+  padding: var(--general-spacing-h3);
+  /* Misc */
+  border-radius: var(--general-spacing-h3);
+  border: 2px var(--tooltip-color) solid;
 }
 
 .tooltip-header {
+  /* Color */
+  /* Spacing */
+  margin: var(--general-spacing-h3);
+  /* Misc */
+  font-size: var(--font-size-h2);
   font-weight: bold;
-  margin-bottom: 10px;
+}
+
+.tooltip-content {
+  /* Color */
+  /* Spacing */
+  margin: var(--general-spacing-h3);
+  /* Misc */
+  font-size: var(--font-size-h3);
 }

@@ -26,3 +26,11 @@ export function getWord (opts: WordOpts): Word {
         singular,
     };
 }
+
+export function quantUpper (word: Word, count: number): string {
+    return count === 1 ? word.Singular : word.Plural;
+}
+
+export function quantLower (word: Word, count: number): string {
+    return count === 1 ? word.singular : word.plural;
+}

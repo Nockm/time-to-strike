@@ -15,9 +15,11 @@ const ItemTooltip = ({ active, payload }: TooltipProps<number, string>): JSX.Ele
         return (
             <div className="tooltip">
                 <div className="tooltip-header">{item.tooltipHeader}</div>
-                {
-                    item.tooltipLines.map((line: string, index: number) => <div key={index}>{line}</div>)
-                }
+                <div className="tooltip-content">
+                    {
+                        item.tooltipLines.map((line: string, index: number) => <div key={index}>{line}</div>)
+                    }
+                </div>
             </div>
         );
     }
@@ -37,7 +39,7 @@ export default function ChartElement ({
             <ResponsiveContainer>
                 <BarChart data={items}>
                     <XAxis dataKey="xvalueformatted" stroke={tickColor} tick angle={90} interval={0} textAnchor="start" height={120} />
-                    <YAxis domain={domain} stroke={tickColor} />
+                    <YAxis domain={domain} stroke={tickColor} width={25} />
                     <Tooltip content={ItemTooltip} />
                     <Bar dataKey="yvalue" />
                 </BarChart>

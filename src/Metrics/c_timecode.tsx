@@ -1,5 +1,5 @@
 import type { Item } from '../Chart/chart.tsx';
-import { getBlankItem } from '../Chart/chart.tsx'; // eslint-disable-line no-duplicate-imports
+import { getBlankItem } from '../Chart/chart.tsx';
 
 export function formatter (timecodeString: string): string {
     const timecode = parseInt(timecodeString, 10);
@@ -15,7 +15,7 @@ export function formatter (timecodeString: string): string {
         ? `${fullTimeReg}+${halfTimeExt}`
         : `${fullTimeReg}`;
 
-    return ret;
+    return `'${ret}`;
 }
 
 function getItem (items: Item[], timecode: string): Item {

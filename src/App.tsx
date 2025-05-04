@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-binary-expression */
 
 import './App.css';
 import { useState } from 'react';
@@ -80,45 +81,83 @@ function App (): JSX.Element {
     return (
         <div className="app">
             <div className="app-header">
-                <div className="app-header-left">⚽ TIME TO STRIKE </div>
-                <div className="title debug-text">{new Date().toUTCString()} </div>
-                <div className="app-header-right">Premier League Stats Seasons 2021 - 2024</div>
-            </div>
-            <div className="app-top">
-                <div className="panel request">
-                    <div>Comparing  </div>
-                    <select value={filterYId} onChange={(event) => { setFilterYId(event.target.value); }}>
-                        { eventFilters.map((eventFilter) => <option key={eventFilter.id} value={eventFilter.id}>{eventFilter.Plural}</option>) }
-                    </select>
-                    <div>  against  </div>
-                    <select value={metricXId} onChange={(event) => { setMetricXId(event.target.value); }}>
-                        { metrics.MetricXs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Plural}</option>) }
-                    </select>
+                <div className="app-header-left">
+                    <div className="logo-text">⚽ TIME TO STRIKE</div>
                 </div>
-                <div className="panel-spacer"></div>
-                <div className="panel filter">
-                    <div>Split results into </div>
-                    <select className="filter-select-group" value={metricGId} onChange={(event) => { setMetricGId(event.target.value); }}>
-                        <option></option>
-                        { metrics.MetricGs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Plural}</option>) }
-                    </select>
-                    <div></div>
-                    {
-                        filters.map((filter, index) => <>
-                            <DynamicEventFilterElement
-                                key={index}
-                                eventKeys={filterKeys}
-                                eventVals={filter.eventKey ? keyToVals[filter.eventKey] : []}
-                                filter={filters[index]}
-                                onDelete={() => { deleteFilter(index); }}
-                                onKeyChange={(newKey) => { updateFilter(index, 'eventKey', newKey); }}
-                                onValChange={(newVal) => { updateFilter(index, 'eventVal', newVal); }}
-                            ></DynamicEventFilterElement>
-                        </>)
-                    }
+                <div className="app-header-center">
+                    <div className="debug-text">{new Date().toUTCString()}</div>
+                </div>
+                <div className="app-header-right">
+                    <div className="status-text">Premier League Stats Seasons 2021 - 2024</div>
                 </div>
             </div>
-            <div className="app-mid">
+            <div className="app-toolbar">
+                <div className="app-toolbar-grid">
+                    <div className="app-toolbar-grid-left">
+                    </div>
+                    <div className="app-toolbar-grid-center">
+                        <div className="query-main">
+                            <div>Compare </div>
+                            <select value={filterYId} onChange={(event) => { setFilterYId(event.target.value); }}>
+                                { eventFilters.map((eventFilter) => <option key={eventFilter.id} value={eventFilter.id}>{eventFilter.Plural}</option>) }
+                            </select>
+                            <div> against </div>
+                            <select value={metricXId} onChange={(event) => { setMetricXId(event.target.value); }}>
+                                { metrics.MetricXs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Plural}</option>) }
+                            </select>
+                        </div>
+                    </div>
+                    <div className="app-toolbar-grid-right">
+                        <div className="query-filter">
+                            {/* 1 */}
+                            <div>Split results into </div>
+                            {/* 2 - 4 */}
+                            <select value={metricGId} onChange={(event) => { setMetricGId(event.target.value); }}>
+                                <option>-- Select --</option>
+                                { metrics.MetricGs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Plural}</option>) }
+                            </select>
+                            {
+                                filters.map((filter, index) =>
+                                {
+                                    const eventKeys = filterKeys;
+                                    const eventVals = filter.eventKey ? keyToVals[filter.eventKey] : [];
+                                    const onDelete = (): void => { deleteFilter(index); };
+                                    const onKeyChange = (newKey: string): void => { updateFilter(index, 'eventKey', newKey); };
+                                    const onValChange = (newVal: string): void => { updateFilter(index, 'eventVal', newVal); };
+
+                                    return (
+                                        <>
+                                            { false && <button onClick={addFilter}>+</button> }
+                                            { false && <button onClick={onDelete}>x</button> }
+                                            {/* 1 */}
+                                            <div>Restrict</div>
+                                            {/* 2 */}
+                                            <select value={filters[index].eventKey || ''} onChange={(event) => {
+                                                onKeyChange(event.target.value);
+                                            }}>
+                                                {
+                                                    eventKeys.map((key) => <option key={key.id} value={key.id || ''}>{key.name}</option>)
+                                                }
+                                            </select>
+                                            {/* 3 */}
+                                            <div>to</div>
+                                            {/* 4 */}
+                                            <select disabled={!filters[index].eventKey} value={filters[index].eventVal || ''} onChange={(event) => {
+                                                onValChange(event.target.value);
+                                            }}>
+                                                {
+                                                    eventVals.map((val) => <option key={val.id} value={val.id || ''}>{val.name}</option>)
+                                                }
+                                            </select>
+                                        </>
+                                    );
+                                })
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="app-cards">
                 {
                     chartSpecs.map(({
                         groupImageUrl,
@@ -130,13 +169,19 @@ function App (): JSX.Element {
                         tickColor,
                     }, index) => <div key={index}>
                         <div className="panel card">
-                            <div className="card-title">
-                                <div className="card-title-1"><b>{labelY}  ×  {labelX}</b></div>
-                                <div className="card-title-2"><div>{labelG}</div></div>
-                            </div>
-                            <img className="card-image" src={groupImageUrl}></img>
-                            <div className="card-chart">
-                                <ChartElement items={items} maxY={maxY} tickColor={tickColor}></ChartElement>
+                            <div className="card-grid">
+                                <div className="card-grid-top-center">
+                                    <div className="card-title-1"><b>{labelY}  ×  {labelX}</b></div>
+                                    <div className="card-title-2"><div>{labelG || ' '}</div></div>
+                                </div>
+                                <div className="card-grid-top-right">
+                                    { groupImageUrl && <img className="card-image" src={groupImageUrl}></img>}
+                                </div>
+                                <div className="card-grid-mid">
+                                    <div className="card-chart">
+                                        <ChartElement items={items} maxY={maxY} tickColor={tickColor}></ChartElement>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>)
