@@ -17,9 +17,9 @@ export type ChartSpec = ChartElementProps & {
 const root = document.documentElement;
 
 /* eslint-disable @stylistic/js/newline-per-chained-call */
-const cardBar1 = getComputedStyle(root).getPropertyValue('--card-bar1').trim();
-const cardBar2 = getComputedStyle(root).getPropertyValue('--card-bar2').trim();
-const cardTickColor = getComputedStyle(root).getPropertyValue('--card-tick-color').trim();
+const cardBar1 = getComputedStyle(root).getPropertyValue('--color-card-bar1').trim();
+const cardBar2 = getComputedStyle(root).getPropertyValue('--color-card-bar2').trim();
+const cardTickColor = getComputedStyle(root).getPropertyValue('--color-card-fore').trim();
 /* eslint-enable @stylistic/js/newline-per-chained-call */
 
 export interface State {

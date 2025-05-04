@@ -13,21 +13,23 @@ export interface DynamicEventFilterElementProps {
 export default function DynamicEventFilterElement ({ filter, eventKeys, eventVals, onKeyChange, onValChange, onDelete }: DynamicEventFilterElementProps): JSX.Element {
     return (
         <>
-            <button className="filter-delete-button" onClick={onDelete}>x</button>
-            <select className="filter-select-key" value={filter.eventKey || ''} onChange={(event) => {
+            <div>Restrict </div>
+            <select value={filter.eventKey || ''} onChange={(event) => {
                 onKeyChange(event.target.value);
             }}>
                 {
-                    eventKeys.map((key) => <option className="filter-option-key" key={key.id} value={key.id || ''}>{key.name}</option>)
+                    eventKeys.map((key) => <option key={key.id} value={key.id || ''}>{key.name}</option>)
                 }
             </select>
-            <select className="filter-select-val" disabled={!filter.eventKey} value={filter.eventVal || ''} onChange={(event) => {
+            <div> to </div>
+            <select disabled={!filter.eventKey} value={filter.eventVal || ''} onChange={(event) => {
                 onValChange(event.target.value);
             }}>
                 {
-                    eventVals.map((val) => <option className="filter-option-key" key={val.id} value={val.id || ''}>{val.name}</option>)
+                    eventVals.map((val) => <option key={val.id} value={val.id || ''}>{val.name}</option>)
                 }
             </select>
+            <button className="filter-button-delete" onClick={onDelete}>x</button>
         </>
     );
 }

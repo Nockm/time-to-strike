@@ -7,42 +7,55 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
 
+
+
+  --theme-text: hsl(10, 20%, 20%);
+  --theme-background: hsl(10, 10%, 98%);
+  --theme-primary: hsl(10, 80%, 50%);
+  --theme-secondary: hsl(10, 60%, 50%);
+  --theme-highlight: hsl(10, 40%, 90%);
+  --theme-purple: hsl(250, 60%, 30%);
+  --theme-muted: hsl(10, 20%, 94%);
+  --theme-gray: hsl(10, 20%, 50%);
+
+
+  --color-app-back: #222;
+  --color-app-fore: white;
+
+  --color-app-logo-back: #000;
+  --color-app-logo-fore: white;
+
+  --color-app-top-back: #222;
+  --color-app-top-fore: white;
+
+  --panel-bg: #333;
+
+  --color-card-back: #3e5a2c;
+  --color-card-border: 2px #CCC solid;
+  --color-card-border-radius: 16px;
+  --color-card-fore: #FCFCFC;
+  --color-card-bar1: #FEFEFE;
+  --color-card-bar2: orange;
+  --color-param-fore: #444;
+  --color-param-back: white;
+
+  --card-tick-font-size: var(--font-size-h3);
+  background-color: var(--color-app-back);
+  color: var(--color-app-fore);
+
   /* Parameters */
 
   --font-family: leaguespartan, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  --font-size-h1: 35px;
-  --font-size-h2: 25px;
-  --font-size-h3: 13px;
+  --font-size-h1: 25px;
+  --font-size-h2: 15px;
+  --font-size-h3: 10px;
 
-  --theme-back1: #02040f;
-  --theme-back2: #001f54;
-  --theme-text1: #e0fbfcCC;
-  --theme-text2: #e0fbfc;
-  --theme-text3: #ee6c4d;
-
-  --general-padding: 8px;
-  --general-margin: 8px;
 
   --debug-outline: 1px red dashed;
   --debug-outline: 0px red dotted;
 
   /* Assignments */
 
-  --card-back: var(--theme-back2);
-  --card-bar1: var(--theme-text1);
-  --card-bar2: var(--theme-text3);
-  --card-photo-image-size: 75px;
-  --card-text: var(--theme-text1);
-  --card-tick-font-size: var(--font-size-h3);
-  --card-tick-color: var(--theme-text1);
-  --card-title-primary-font-size: var(--font-size-h1);
-  --card-title-secondary-font-size: var(--font-size-h2);
-
-  --choice-color-back: var(--theme-text3);
-  --choice-color-fore: var(--theme-back1);
-
-  background-color: var(--theme-back1);
-  color: var(--theme-text1);
   font-size: var(--font-size-h1);
 }
 
@@ -51,30 +64,20 @@ div {
 }
 
 select {
-  font-size: var(--font-size-h1);
   font-family: var(--font-family);
-  /* background-color: transparent; */
-  /* border: 0px; */
-  /* margin-top: -1px; */
-
-  /* Remove arrow */
-  appearance: none;
-  /* -webkit-appearance: none; */
-  /* -moz-appearance: none; */
+  /* appearance: none; */
   background: none;
-  background-color: var(--choice-color-back);
-  color: var(--choice-color-fore);
-  /* padding-right: 1em; */
   text-align: center;
-  padding: var(--general-padding);
+  border: none;
+  border-radius: 2px;
+  padding: 8px;
 
-  border: 0px solid #ccc;
-  border-radius: 8px;
+  background-color: var(--color-param-back);
+  font-weight: bold;
+  color: var(--color-param-fore);
 }
 
 option {
-  color: black;
-  background-color: var(--theme-text3);
   border-width: 0px;
   font-size: var(--font-size-h2);
 }
@@ -95,175 +98,201 @@ body {
   place-items: center;
 }
 
-.container {
+/**********************
+ **********************
+ ***
+ ***   App
+ ***
+ **********************
+ *********************/
+
+.debug-text {
+  font-size: var(--font-size-h3);
+}
+
+.app {
   display: flex;
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
 }
 
-.header {
-  flex: 0 0 auto;
-  margin: var(--general-margin);
-  padding: var(--general-padding);
+.app-header {
+  background-color: var(--color-app-logo-back);
+  color: var(--color-app-logo-fore);
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
 }
 
-.tooltip {
-  background-color: white;
-  border: 1px solid black;
-  color: black;
-  padding: 10px;
-}
-
-.tooltip-header {
+.app-header-left {
+  display: grid;
+  text-align: left;
   font-weight: bold;
-  margin-bottom: 10px;
 }
 
-/* Misc */
-
-.debug-text {
-  font-size: var(--font-size-h3);
-  margin: var(--general-margin);
-  padding: var(--general-padding);
+.app-header-right {
+  text-align: right;
+  font-weight: lighter;
 }
 
-/* Header */
-
-.menu-row {
-  display: flex;
-  justify-content: center;
-  white-space: pre;
-}
-
-/*
- *
- *
- * Preferences
- *
- */
-
- .toolbar {
+.app-top {
+  flex: 0 0 auto;
   display: flex;
   flex-direction: row;
-  margin: var(--general-margin);
-  padding: var(--general-padding);
+  background-color: var(--color-app-top-back);
+  color: var(--color-app-top-fore);
+  /* margin: 32px; */
+}
+
+.app-mid {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+.panel {
+  /* background-color: var(--panel-bg); */
+  /* outline: 1px dotted white; */
+  /* border-radius: var(--color-card-border-radius); */
+  /* border: var(--color-card-border); */
+}
+
+.panel-spacer {
+  width: 100%;
+  background-color: transparent;
+}
+
+/**********************
+ **********************
+ ***
+ ***   Title
+ ***
+ **********************
+ *********************/
+ .title {
+  width: 100%;
  }
+
+/**********************
+ **********************
+ ***
+ ***   Request
+ ***
+ **********************
+ *********************/
 
 .request {
   display: grid;
   grid-template-columns: auto auto auto auto auto auto;
-  /* grid-template-columns: auto auto; */
-  /* grid-template-rows: auto auto auto; */
   align-items: center;
-  margin: var(--general-margin);
-  padding: var(--general-padding);
+  /* margin: 32px; */
+  padding: 16px;
+  margin-left: 16px;
 }
 
-.request-key {
+.request div {
   text-align: right;
-  padding-right: var(--general-padding);
   white-space: pre;
 }
 
-.request-val {
-  text-align: left;
-  white-space: nowrap;
+.request select {
+  font-size: var(--font-size-h1);
 }
+
+.request option {
+  font-size: var(--font-size-h2);
+}
+
+/**********************
+ **********************
+ ***
+ ***   Filter
+ ***
+ **********************
+ *********************/
 
 .filter {
   display: grid;
-  grid-template-columns: auto auto auto;
-  /* grid-template-rows: auto auto auto; */
-  margin: var(--general-margin);
-  padding: var(--general-padding);
-  white-space: nowrap;
+  grid-template-columns: auto auto auto auto auto;
+  white-space: pre;
+  font-size: var(--font-size-h2);
+  grid-gap: 10px; /* add 10px gap between rows and columns */
+  align-items: center;
+  /* margin: 32px; */
+  padding: 16px;
 }
 
-.filter-button {
+.filter select {
   font-size: var(--font-size-h2);
 }
 
-.filter-delete-button {
-  padding-left: 20px;
-  padding-right: 20px;
+.filter option {
+  font-size: var(--font-size-h3);
+}
+
+.filter div {
+  text-align: right;
+}
+
+.filter-select-group {
+  grid-column: span 3;
+}
+
+.filter-button-delete {
   font-size: var(--font-size-h2);
-  background-color: transparent;
   border: 0px;
-  color: var(--theme-text3)
+  visibility: collapse;
+  width: 0px;
 }
 
-.filter-select-key {
-  font-size: var(--font-size-h2);
-}
 
-.filter-select-val {
-  font-size: var(--font-size-h2);
-}
-
-.filter-option-key {
-  font-size: var(--font-size-h2);
-}
-
-.filter-option-val {
-  font-size: var(--font-size-h2);
-}
-
-/*
- *
- *
- * Cards
- *
- */
-
-/* Level 0 */
-
-.cards {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  margin: var(--general-margin);
-  padding: var(--general-padding);
-}
-
-/* Level 1 */
+/**********************
+ **********************
+ ***
+ ***   Card
+ ***
+ **********************
+ *********************/
 
 .card {
   display: grid;
   grid-template-columns: auto;
   grid-template-rows: auto auto;
   align-items: center;
-  background-color: var(--card-back);
-  margin: var(--general-margin);
-  /* padding: var(--general-padding); */
-}
 
-/* Level 2 */
+  background-color: var(--color-card-back);
+  border: var(--color-card-border);
+  border-radius: var(--color-card-border-radius);
+  color: var(--color-card-fore);
+  margin: 32px;
+  margin-top: 0px;
+  padding-top: 32px;
+  padding-right: 32px;
+}
 
 .card-title {
   grid-column: 1;
   grid-row: 1;
   justify-self: center;
-  margin: var(--general-margin);
-  padding: var(--general-padding);
 }
 
-.card-title-primary {
+.card-title-1 {
   white-space: pre;
   font-size: var(--card-title-primary-font-size);
 }
 
-.card-title-secondary {
+.card-title-2 {
   font-weight: bold;
   font-size: var(--card-title-secondary-font-size);
   padding-top: 6px;
 }
 
-.card-photo {
+.card-image {
   grid-column: 1;
   grid-row: 1;
   justify-self: end;
-  margin: var(--general-margin);
-  padding: var(--general-padding);
+  width: var(--card-photo-image-size);
+  height: var(--card-photo-image-size);
 }
 
 .card-chart {
@@ -271,13 +300,27 @@ body {
   grid-row: 2;
   height: 500px;
   font-size: var(--card-tick-font-size);
-  margin: var(--general-margin);
-  /* padding: var(--general-padding); */
 }
 
-/* Level 3 */
+/**********************
+ **********************
+ ***
+ ***   Tooltip
+ ***
+ **********************
+ *********************/
 
-.card-photo-image {
-  width: var(--card-photo-image-size);
-  height: var(--card-photo-image-size);
+
+ .tooltip {
+  border: 1px solid black;
+  padding: 10px;
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  background-color: yellow;
+  color: black;
+}
+
+.tooltip-header {
+  font-weight: bold;
+  margin-bottom: 10px;
 }

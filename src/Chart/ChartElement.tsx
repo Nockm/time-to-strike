@@ -37,7 +37,7 @@ export default function ChartElement ({
             <ResponsiveContainer>
                 <BarChart data={items}>
                     <XAxis dataKey="xvalueformatted" stroke={tickColor} tick angle={90} interval={0} textAnchor="start" height={120} />
-                    <YAxis domain={domain} />
+                    <YAxis domain={domain} stroke={tickColor} />
                     <Tooltip content={ItemTooltip} />
                     <Bar dataKey="yvalue" />
                 </BarChart>

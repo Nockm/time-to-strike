@@ -78,32 +78,34 @@ function App (): JSX.Element {
     chartSpecs = counters.sortArrayByString(chartSpecs, (x) => x.labelG);
 
     return (
-        <div className="container">
-            <div className="header">
-                <div className="debug-text">{new Date().toUTCString()}</div>
-                <div className="toolbar">
-                    <div className="request">
-                        <div className="request-key">Show how </div>
-                        <select value={filterYId} onChange={(event) => { setFilterYId(event.target.value); }}>
-                            { eventFilters.map((eventFilter) => <option key={eventFilter.id} value={eventFilter.id}>{eventFilter.Plural}</option>) }
-                        </select>
-                        <div className="request-key"> change with </div>
-                        <select value={metricXId} onChange={(event) => { setMetricXId(event.target.value); }}>
-                            { metrics.MetricXs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Plural}</option>) }
-                        </select>
-                        <div className="request-key"> for each </div>
-                        <select value={metricGId} onChange={(event) => { setMetricGId(event.target.value); }}>
-                            <option></option>
-                            { metrics.MetricGs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Singular}</option>) }
-                        </select>
-                    </div>
-                    <div style={{ 'width': '100%' }}></div>
-                    <div className="filter">
-                        <div></div>
-                        <div></div>
-                        <button className="filter-button" onClick={(): void => { addFilter(); }}>Add Filter</button>
-                        {
-                            filters.map((filter, index) => <DynamicEventFilterElement
+        <div className="app">
+            <div className="app-header">
+                <div className="app-header-left">⚽ TIME TO STRIKE </div>
+                <div className="title debug-text">{new Date().toUTCString()} </div>
+                <div className="app-header-right">Premier League Stats Seasons 2021 - 2024</div>
+            </div>
+            <div className="app-top">
+                <div className="panel request">
+                    <div>Comparing  </div>
+                    <select value={filterYId} onChange={(event) => { setFilterYId(event.target.value); }}>
+                        { eventFilters.map((eventFilter) => <option key={eventFilter.id} value={eventFilter.id}>{eventFilter.Plural}</option>) }
+                    </select>
+                    <div>  against  </div>
+                    <select value={metricXId} onChange={(event) => { setMetricXId(event.target.value); }}>
+                        { metrics.MetricXs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Plural}</option>) }
+                    </select>
+                </div>
+                <div className="panel-spacer"></div>
+                <div className="panel filter">
+                    <div>Split results into </div>
+                    <select className="filter-select-group" value={metricGId} onChange={(event) => { setMetricGId(event.target.value); }}>
+                        <option></option>
+                        { metrics.MetricGs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Plural}</option>) }
+                    </select>
+                    <div></div>
+                    {
+                        filters.map((filter, index) => <>
+                            <DynamicEventFilterElement
                                 key={index}
                                 eventKeys={filterKeys}
                                 eventVals={filter.eventKey ? keyToVals[filter.eventKey] : []}
@@ -111,38 +113,34 @@ function App (): JSX.Element {
                                 onDelete={() => { deleteFilter(index); }}
                                 onKeyChange={(newKey) => { updateFilter(index, 'eventKey', newKey); }}
                                 onValChange={(newVal) => { updateFilter(index, 'eventVal', newVal); }}
-                            ></DynamicEventFilterElement>)
-                        }
-                    </div>
-                </div>
-            </div>
-            <div className="cards">
-                <div>
-                    {
-                        chartSpecs.map(({
-                            groupImageUrl,
-                            items,
-                            labelG,
-                            labelX,
-                            labelY,
-                            maxY,
-                            tickColor,
-                        }, index) => <div key={index}>
-                            <div className="card">
-                                <div className="card-title">
-                                    <div className="card-title-primary"><b>{labelY}  ×  {labelX}</b></div>
-                                    <div className="card-title-secondary"><div>{labelG}</div></div>
-                                </div>
-                                <div className="card-photo">
-                                    <img className="card-photo-image" src={groupImageUrl}></img>
-                                </div>
-                                <div className="card-chart">
-                                    <ChartElement items={items} maxY={maxY} tickColor={tickColor}></ChartElement>
-                                </div>
-                            </div>
-                        </div>)
+                            ></DynamicEventFilterElement>
+                        </>)
                     }
                 </div>
+            </div>
+            <div className="app-mid">
+                {
+                    chartSpecs.map(({
+                        groupImageUrl,
+                        items,
+                        labelG,
+                        labelX,
+                        labelY,
+                        maxY,
+                        tickColor,
+                    }, index) => <div key={index}>
+                        <div className="panel card">
+                            <div className="card-title">
+                                <div className="card-title-1"><b>{labelY}  ×  {labelX}</b></div>
+                                <div className="card-title-2"><div>{labelG}</div></div>
+                            </div>
+                            <img className="card-image" src={groupImageUrl}></img>
+                            <div className="card-chart">
+                                <ChartElement items={items} maxY={maxY} tickColor={tickColor}></ChartElement>
+                            </div>
+                        </div>
+                    </div>)
+                }
             </div>
         </div>
     );

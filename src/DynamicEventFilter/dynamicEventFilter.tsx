@@ -60,7 +60,7 @@ export function getEventKeyToValsLut (events: Event[]): Record<string, EventVal[
 export function getFilterEventKeys (): EventKey[] {
     const eventKeys: EventKey[] = metrics.MetricFs.map((value: Metric) => ({
         'id': value.id,
-        'name': value.singular,
+        'name': value.Plural,
     }));
 
     eventKeys.unshift({ 'id': null, 'name': '...' });
