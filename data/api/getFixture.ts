@@ -1,6 +1,6 @@
 import type * as Api from './apiType.ts';
 import type { CallOpts } from './call.ts';
-import { call } from './call.ts'; // eslint-disable-line no-duplicate-imports
+import { call } from './call.ts';
 
 interface GetFixtureOpts {
     'id': number;

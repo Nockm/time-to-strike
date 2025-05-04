@@ -2,7 +2,7 @@ import * as path from 'path';
 import { readCache, writeCache } from './cache.ts';
 import type { ValidResponse } from './apiResponse.ts';
 import { getDirname } from '../util/pathUtil.ts';
-import { isValidResponse } from './apiResponse.ts'; // eslint-disable-line no-duplicate-imports
+import { isValidResponse } from './apiResponse.ts';
 import { readFileSync } from 'node:fs';
 const dirname = getDirname(import.meta.url);
 

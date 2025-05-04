@@ -1,6 +1,6 @@
 import type * as Api from './apiType.ts';
 import type { CallOpts } from './call.ts';
-import { call } from './call.ts'; // eslint-disable-line no-duplicate-imports
+import { call } from './call.ts';
 
 export async function getStatus (callOpts: CallOpts): Promise<(Api.Response<Api.Status> | null)> {
     const ret = await call('https://v3.football.api-sports.io/status', callOpts);
