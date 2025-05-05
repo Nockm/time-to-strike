@@ -10,9 +10,9 @@ import * as b64ZipUtil from '../data/util/stringCompressionUtil.ts';
 import ChartElement from './Chart/ChartElement.tsx';
 import { getChartSpecs } from './chartSpecUtil.ts';
 import * as dynamicEventFilter from './DynamicEventFilter/dynamicEventFilter.tsx';
-import DynamicEventFilterElement from './DynamicEventFilter/DynamicEventFilterElement.tsx';
 import * as eventTypeFilter from './EventTypeFilter/eventTypeFilter.tsx';
 import * as metrics from './Metrics/metrics.tsx';
+import { Select } from './styledElements.tsx';
 
 // Decompress and parse the database.
 const dbJson: string = b64ZipUtil.decompressString(dbJsonCompressed);
@@ -78,44 +78,49 @@ function App (): JSX.Element {
     // Sort charts in alphabetical order.
     chartSpecs = counters.sortArrayByString(chartSpecs, (x) => x.labelG);
 
+    chartSpecs = chartSpecs.slice(0, 50);
+
     return (
-        <div className="app">
-            <div className="app-header">
-                <div className="app-header-left">
+        <div className="app bg-zinc-100">
+            <h2 className="grid grid-cols-1 items-center p-2 font-bold bg-zinc-900 text-zinc-100">
+                <div className="row-1 col-1 justify-self-start">
                     <div className="logo-text">⚽ TIME TO STRIKE</div>
                 </div>
-                <div className="app-header-center">
+                <div className="row-1 col-1 justify-self-center">
                     <div className="debug-text">{new Date().toUTCString()}</div>
                 </div>
-                <div className="app-header-right">
+                <div className="row-1 col-1 justify-self-end">
                     <div className="status-text">Premier League Stats Seasons 2021 - 2024</div>
                 </div>
-            </div>
-            <div className="app-toolbar">
-                <div className="app-toolbar-grid">
-                    <div className="app-toolbar-grid-left">
+            </h2>
+            <div className="app-toolbar m-8">
+                <div className="grid grid-cols-1 items-center">
+                    {/* Left */}
+                    <div className="row-1 col-1 justify-self-start">
                     </div>
-                    <div className="app-toolbar-grid-center">
-                        <div className="query-main">
+                    {/* Middle */}
+                    <div className="row-1 col-1 justify-self-center">
+                        <h1 className="grid grid-rows-1 grid-cols-[auto_auto_auto_auto] items-center gap-4">
                             <div>Compare </div>
-                            <select value={filterYId} onChange={(event) => { setFilterYId(event.target.value); }}>
+                            <Select value={filterYId} onChange={(event) => { setFilterYId(event.target.value); }}>
                                 { eventFilters.map((eventFilter) => <option key={eventFilter.id} value={eventFilter.id}>{eventFilter.Plural}</option>) }
-                            </select>
+                            </Select>
                             <div> against </div>
-                            <select value={metricXId} onChange={(event) => { setMetricXId(event.target.value); }}>
+                            <Select value={metricXId} onChange={(event) => { setMetricXId(event.target.value); }}>
                                 { metrics.MetricXs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Plural}</option>) }
-                            </select>
-                        </div>
+                            </Select>
+                        </h1>
                     </div>
-                    <div className="app-toolbar-grid-right">
-                        <div className="query-filter">
+                    {/* Right */}
+                    <div className="row-1 col-1 justify-self-end">
+                        <h2 className="grid grid-cols-[auto_auto_auto_auto] items-center gap-2">
                             {/* 1 */}
-                            <div>Split results into </div>
+                            <div>Split results into:</div>
                             {/* 2 - 4 */}
-                            <select value={metricGId} onChange={(event) => { setMetricGId(event.target.value); }}>
+                            <Select className="col-span-3" value={metricGId || ''} onChange={(event) => { setMetricGId(event.target.value); }}>
                                 <option>-- Select --</option>
                                 { metrics.MetricGs.map((metric) => <option key={metric.id} value={metric.id}>{metric.Plural}</option>) }
-                            </select>
+                            </Select>
                             {
                                 filters.map((filter, index) =>
                                 {
@@ -130,30 +135,30 @@ function App (): JSX.Element {
                                             { false && <button onClick={addFilter}>+</button> }
                                             { false && <button onClick={onDelete}>x</button> }
                                             {/* 1 */}
-                                            <div>Restrict</div>
+                                            <div className="text-right">Restrict:</div>
                                             {/* 2 */}
-                                            <select value={filters[index].eventKey || ''} onChange={(event) => {
+                                            <Select value={filters[index].eventKey || ''} onChange={(event) => {
                                                 onKeyChange(event.target.value);
                                             }}>
                                                 {
                                                     eventKeys.map((key) => <option key={key.id} value={key.id || ''}>{key.name}</option>)
                                                 }
-                                            </select>
+                                            </Select>
                                             {/* 3 */}
                                             <div>to</div>
                                             {/* 4 */}
-                                            <select disabled={!filters[index].eventKey} value={filters[index].eventVal || ''} onChange={(event) => {
+                                            <Select disabled={!filters[index].eventKey} value={filters[index].eventVal || ''} onChange={(event) => {
                                                 onValChange(event.target.value);
                                             }}>
                                                 {
                                                     eventVals.map((val) => <option key={val.id} value={val.id || ''}>{val.name}</option>)
                                                 }
-                                            </select>
+                                            </Select>
                                         </>
                                     );
                                 })
                             }
-                        </div>
+                        </h2>
                     </div>
                 </div>
             </div>
@@ -168,20 +173,16 @@ function App (): JSX.Element {
                         maxY,
                         tickColor,
                     }, index) => <div key={index}>
-                        <div className="panel card">
-                            <div className="card-grid">
-                                <div className="card-grid-top-center">
-                                    <div className="card-title-1"><b>{labelY}  ×  {labelX}</b></div>
-                                    <div className="card-title-2"><div>{labelG || ' '}</div></div>
-                                </div>
-                                <div className="card-grid-top-right">
-                                    { groupImageUrl && <img className="card-image" src={groupImageUrl}></img>}
-                                </div>
-                                <div className="card-grid-mid">
-                                    <div className="card-chart">
-                                        <ChartElement items={items} maxY={maxY} tickColor={tickColor}></ChartElement>
-                                    </div>
-                                </div>
+                        <div className="grid grid-cols-1 items-center p-8 rounded-4xl m-8 mt-0 bg-zinc-300">
+                            <div className="row-1 col-1 justify-self-center">
+                                <div className="text-3xl font-bold"><b>{labelY}  ×  {labelX}</b></div>
+                                <div className="text-3xl font-light"><div>{labelG || ' '}</div></div>
+                            </div>
+                            <div className="row-1 col-1 justify-self-end">
+                                { groupImageUrl && <img className=" w-30 h-30" src={groupImageUrl}></img>}
+                            </div>
+                            <div className="row-2 col-1 h-[500px] text-xs">
+                                <ChartElement items={items} maxY={maxY} tickColor={tickColor}></ChartElement>
                             </div>
                         </div>
                     </div>)

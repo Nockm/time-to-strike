@@ -15,14 +15,6 @@ export type ChartSpec = ChartElementProps & {
     'groupImageUrl'?: string;
 };
 
-const root = document.documentElement;
-
-/* eslint-disable @stylistic/js/newline-per-chained-call */
-const cardBar1 = getComputedStyle(root).getPropertyValue('--color-card-bar1').trim();
-const cardBar2 = getComputedStyle(root).getPropertyValue('--color-card-bar2').trim();
-const cardTickColor = getComputedStyle(root).getPropertyValue('--color-card-fore').trim();
-/* eslint-enable @stylistic/js/newline-per-chained-call */
-
 export interface State {
     'filterY': EventTypeFilter;
     'metricX': Metric;
@@ -37,8 +29,8 @@ function getChartItem (state: State, xvalue: string, events: Db.Event[]): chart.
         : xvalue;
 
     const fill = xvalueformatted.includes('+')
-        ? cardBar2
-        : cardBar1;
+        ? 'red'
+        : '#333';
 
     return {
         fill,
@@ -69,7 +61,7 @@ function getChartSpec (state: State, dbEvents: Db.Event[], groupName: string): C
         : '';
 
     return {
-        'tickColor': cardTickColor,
+        'tickColor': '',
         'labelX': state.metricX.Plural,
         'labelY': state.filterY.Plural,
         'labelG': groupName,

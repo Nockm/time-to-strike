@@ -13,14 +13,15 @@ const ItemTooltip = ({ active, payload }: TooltipProps<number, string>): JSX.Ele
     if (active && payload?.length) {
         const item: Item = payload[0].payload;
         return (
-            <div className="tooltip">
-                <div className="tooltip-header">{item.tooltipHeader}</div>
-                <div className="tooltip-content">
+            item.yvalue ? <div className="bg-yellow-100 m-1 p-1 rounded-lg">
+                <div className="m-1 p-1 font-bold text-lg">{item.tooltipHeader}</div>
+                <div className="m-1 p-1">
                     {
                         item.tooltipLines.map((line: string, index: number) => <div key={index}>{line}</div>)
                     }
                 </div>
             </div>
+                : <></>
         );
     }
 
