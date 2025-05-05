@@ -71,6 +71,7 @@ export default tseslint.config(
       "no-ternary": "off",
       "one-var": "off",
       "sort-imports": "off",
+      "sort-keys": "off",
 
       // Not sure. (Need to try `strictNullChecks` compiler option first.)
       "@typescript-eslint/prefer-nullish-coalescing": "off", // This rule requires the `strictNullChecks` compiler option to be turned on to function correctly
