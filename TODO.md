@@ -2,19 +2,23 @@
 
 ## Features
 
-- [X] ✨ Design polish
-- [X] ✨ Add null grouping
-- [X] ✨ Add filters
-- [ ] ✨ Make each Db.Event field sortable
-- [ ] ✨ Option: Boost values by rarity
-- [ ] ✨ Toggle between sort X or Y
-- [X] ✨ Add e.g. metricname_image metric wherever applicable
-- [X] ✨ Set consistent Y-Value (domain)
-- [X] ✨ Compress db.json
+- [X] 🆕 Add null group.
+- [X] 🆕 Add filters.
+- [X] 🆕 Add images.
+- [X] 🆕 Make chart y-values consistent with each other.
+- [X] 🆕 Compress database.
+- [ ] 🆕 Make each Db.Event field sortable.
+- [ ] 🆕 Option: Boost values by rarity.
+- [ ] 🆕 Option: Sort by X (or Y).
 
 ## Bugs
 
-- [ ] 🐞 Fix tooltip caption to make sense
-- [X] 🐞 Make charts take full width
-- [ ] 🐞 Sort x-axis
-- [ ] 🐞 Sort groups
+- [ ] 🐞 Fix tooltip caption to make sense.
+- [X] 🐞 Make charts take full width.
+
+## Polish
+
+- [X] ✨ General polish.
+- [ ] ✨ Tooltip summary: Add timestamp for each line.
+- [ ] ✨ Proper names for null-selection.
+- [ ] ✨ Add corner "tags" to each chart for grouping and filtering.
